@@ -2,6 +2,10 @@
 
 Lineage tree generation for clonal families of antibody sequences, leveraging the FastBCR and ClonalTree tools
 
+## FastBCR Input Generation
+
+`list_samples()` generates 3660 runs from just the human heavy chains. There are ~4000 runs total when querying the BigQuery db.
+
 ## Requirements 
 
 - Installation of R >= 4.1.0. Create a conda environment and install R through conda. 

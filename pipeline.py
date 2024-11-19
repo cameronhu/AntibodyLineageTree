@@ -39,8 +39,6 @@ def read_data(file_paths):
 # 	# returns fastbcr data
 
 
-# writes fastbcr data to GCS
-# ask chatgpt for function here
 def write_to_gcs(data, path):
     """
     Write a pandas DataFrame to a CSV file in a GCP bucket.
@@ -104,31 +102,32 @@ def test_read_write():
     write_to_gcs(test_data, out_dir)
 
 
-# if __name__ == "__main__":
-#     run_to_files = list_samples()
-#     out_dir = "proevo-ab/lineages/fastbcr/input/runs"
+if __name__ == "__main__":
+    run_to_files = list_samples()
+    out_dir = "proevo-ab/lineages/fastbcr/input/runs"
 
-#     # Select the first 20 runs from the dictionary
-#     run_ids = dict(itertools.islice(run_to_files.items(), 20))
+    # Select the first n runs from the dictionary
+    num_runs = 5
+    run_ids = dict(itertools.islice(run_to_files.items(), num_runs))
 
-#     # Track the total processing time
-#     start_total = time.time()
+    # Track the total processing time
+    start_total = time.time()
 
-#     # Process each run
-#     for run, file_paths in run_ids.items():
-#         start = time.time()
-#         output_path = os.path.join(out_dir, run)
-#         print(output_path)
+    # Process each run
+    for run, file_paths in run_ids.items():
+        start = time.time()
+        output_path = os.path.join(out_dir, run)
+        print(output_path)
 
-#         # Run the pipeline for the given file paths and output path
-#         pipeline(file_paths, output_path)
+        # Run the pipeline for the given file paths and output path
+        pipeline(file_paths, output_path)
 
-#         end = time.time()
-#         print(f"Time for {run}: {end - start:.2f} seconds")
+        end = time.time()
+        print(f"Time for {run}: {end - start:.2f} seconds")
 
-#     # Calculate and print the total processing time
-#     end_total = time.time()
-#     print(f"Total time for 20 runs: {end_total - start_total:.2f} seconds")
+    # Calculate and print the total processing time
+    end_total = time.time()
+    print(f"Total time for {num_runs} runs: {end_total - start_total:.2f} seconds")
 
 
 # def parallel_process(run_to_files, out_dir):
