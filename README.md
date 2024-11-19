@@ -4,7 +4,10 @@ Lineage tree generation for clonal families of antibody sequences, leveraging th
 
 ## FastBCR Input Generation
 
-`list_samples()` generates 3660 runs from just the human heavy chains. There are ~4000 runs total when querying the BigQuery db.
+- `list_samples()` generates 3660 runs from just the human heavy chains. There are ~4000 runs total when querying the BigQuery db.
+- Running pipeline on 64 GB had insufficient memory for run: "proevo-ab/lineages/fastbcr/input/runs/SRR8365422". Increased to 124GB and testing.
+- Completed SRR8365422 at 124 GB, but was close to 100 GB of total memory. SRR8365422 has 4_545_677 unique  sequences, and 6_177_127 total sequences. ~950 seconds to complete this processing.
+- SRR8365433 crashed memory, has 25,705,003 total sequences, ~5 million unique sequences
 
 ## Requirements 
 

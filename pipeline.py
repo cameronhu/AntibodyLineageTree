@@ -7,6 +7,13 @@ import time
 from google.cloud import storage
 import io
 import itertools
+import psutil
+
+
+def get_memory_usage():
+    process = psutil.Process()
+    mem_info = process.memory_info()
+    return mem_info.rss / (1024**3)  # Convert to GB
 
 
 # get list of files associated with each run
@@ -108,7 +115,8 @@ if __name__ == "__main__":
 
     # Select the first n runs from the dictionary
     num_runs = 5
-    run_ids = dict(itertools.islice(run_to_files.items(), num_runs))
+    # run_ids = dict(itertools.islice(run_to_files.items(), num_runs))
+    run_ids = np.random.choice(run_to_files, num_runs)
 
     # Track the total processing time
     start_total = time.time()
