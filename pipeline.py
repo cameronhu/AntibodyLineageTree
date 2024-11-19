@@ -1,7 +1,7 @@
 from collections import defaultdict
 import multiprocessing
 import os
-import numpy as np
+import random
 import pandas as pd
 import time
 from google.cloud import storage
@@ -114,9 +114,10 @@ if __name__ == "__main__":
     out_dir = "proevo-ab/lineages/fastbcr/input/runs"
 
     # Select the first n runs from the dictionary
-    num_runs = 5
+    num_runs = 10
     # run_ids = dict(itertools.islice(run_to_files.items(), num_runs))
-    run_ids = np.random.choice(run_to_files, num_runs)
+    random_run_ids = random.sample(run_to_files.items(), num_runs)
+    run_ids = dict(random_run_ids)
 
     # Track the total processing time
     start_total = time.time()
@@ -124,14 +125,20 @@ if __name__ == "__main__":
     # Process each run
     for run, file_paths in run_ids.items():
         start = time.time()
+        initial_memory = get_memory_usage()
         output_path = os.path.join(out_dir, run)
         print(output_path)
 
         # Run the pipeline for the given file paths and output path
         pipeline(file_paths, output_path)
 
+        # Calculate memory usage
+        final_memory = get_memory_usage()
+        max_memory_used = final_memory - initial_memory
+
         end = time.time()
         print(f"Time for {run}: {end - start:.2f} seconds")
+        print(f"Max memory utilized for {run}: {max_memory_used:.2f} GB")
 
     # Calculate and print the total processing time
     end_total = time.time()
