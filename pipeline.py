@@ -3,6 +3,10 @@ import multiprocessing
 import os
 import numpy as np
 import pandas as pd
+import time
+from google.cloud import storage
+import io
+import itertools
 
 
 # get list of files associated with each run
@@ -34,15 +38,79 @@ def read_data(file_paths):
 # 	# generates fastbcr_input
 # 	# returns fastbcr data
 
-# # writes fastbcr data to GCS
-# # ask chatgpt for function here
-# def write_to_gcs(data, path):
-# 	pass
 
-# def pipeline(file_paths, out_path):
-# 	oas_data = read_data(file_paths)
-# 	fastbcr_data = oas_to_fastbcr(data)
-# 	write_to_gcs(fastbcr_data, out_path)
+# writes fastbcr data to GCS
+# ask chatgpt for function here
+def write_to_gcs(data, path):
+    """
+    Write a pandas DataFrame to a CSV file in a GCP bucket.
+
+    Parameters:
+    - data (pd.DataFrame): The pandas DataFrame to write.
+    - path (str): The GCS path where the file will be written, in the format "bucket_name/folder_name/file_name.csv".
+
+    Returns:
+    - None
+    """
+    # Split the GCS path into bucket and blob (object path)
+    bucket_name, *blob_path = path.split("/", 1)
+    blob_path = blob_path[0] if blob_path else ""
+
+    if not bucket_name or not blob_path:
+        raise ValueError(
+            "Invalid GCS path format. Expected 'bucket_name/path_to_file.csv'."
+        )
+
+    # Create an in-memory file-like buffer for the CSV
+    csv_buffer = io.StringIO()
+    data.to_csv(csv_buffer, index=False)
+    csv_buffer.seek(0)  # Move the pointer to the start of the buffer
+
+    # Initialize a GCS client
+    client = storage.Client()
+
+    # Get the bucket and blob
+    bucket = client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
+
+    # Upload the CSV content to GCS
+    blob.upload_from_string(csv_buffer.getvalue(), content_type="text/csv")
+
+    print(f"DataFrame successfully written to {path}")
+
+
+def pipeline(file_paths, out_path):
+    data = read_data(file_paths)
+    # fastbcr_data = oas_to_fastbcr(data)
+    write_to_gcs(data, out_path)
+
+
+if __name__ == "__main__":
+    run_to_files = list_samples()
+    out_dir = "proevo-ab/lineages/fastbcr/input/runs"
+
+    # Select the first 20 runs from the dictionary
+    run_ids = dict(itertools.islice(run_to_files.items(), 20))
+
+    # Track the total processing time
+    start_total = time.time()
+
+    # Process each run
+    for run, file_paths in run_ids.items():
+        start = time.time()
+        output_path = os.path.join(out_dir, run)
+        print(output_path)
+
+        # Run the pipeline for the given file paths and output path
+        pipeline(file_paths, output_path)
+
+        end = time.time()
+        print(f"Time for {run}: {end - start:.2f} seconds")
+
+    # Calculate and print the total processing time
+    end_total = time.time()
+    print(f"Total time for 20 runs: {end_total - start_total:.2f} seconds")
+
 
 # def parallel_process(run_to_files, out_dir):
 #     def process_run(run_id, file_paths):
@@ -59,21 +127,6 @@ def read_data(file_paths):
 #         results = [pool.apply_async(process_run, args=(run_id, file_paths)) for run_id, file_paths in tasks]
 #         for result in results:
 #             result.get()
-
-
-# if __name__ == "__main__":
-#     run_to_files = list_samples()
-#     out_dir = "/path/to/output"
-#     import time
-#     run_ids = np.random.choice(list(run_to_files.keys(), 20))
-#     for run in run_ids:
-# 		file_paths = run_to_files[run]
-# 		start = time.time()
-# 		output_path = ...
-# 		pipeline(file_paths, output_path)
-# 		end = time.time()
-# 		print(f"time for {run}:", end-start)
-
 
 # #if __name__ == "__main__":
 # #    run_to_files = list_samples()
