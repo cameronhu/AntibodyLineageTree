@@ -2,6 +2,7 @@ from collections import defaultdict
 import multiprocessing
 import os
 import numpy as np
+import pandas as pd
 
 
 # get list of files associated with each run
@@ -11,22 +12,22 @@ def list_samples():
     for subdir in os.listdir(dir):
         for file in os.listdir(os.path.join(dir, subdir)):
             filepath = "/".join([dir, subdir, file])
+
             # split file path to extract run_id
             run_id = file.split("_")[0]
-            # print(file)
-            # print(run_id)
-            # print(filepath)
-            # break
+
             run_to_files[run_id].append(filepath)
     return run_to_files
 
 
-# # generate data reader function
-# def read_data(file_paths):
-# 	data = ... # df of data
-# 	for file in file_paths:
-# 		file_data = .... # read and append to data
-# 	return data
+# generate data reader function
+def read_data(file_paths):
+    all_run_data = pd.DataFrame()  # df of data
+    for file in file_paths:
+        single_file_data = pd.read_csv(file, header=1)  # read and append to data
+        all_run_data = pd.concat([all_run_data, single_file_data], ignore_index=True)
+    return all_run_data
+
 
 # # generate function to prepare fastbcr_input from data object
 # def oas_to_fastbcr(data):
