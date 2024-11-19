@@ -116,8 +116,9 @@ if __name__ == "__main__":
     # Select the first n runs from the dictionary
     num_runs = 10
     # run_ids = dict(itertools.islice(run_to_files.items(), num_runs))
-    random_run_ids = random.sample(run_to_files.items(), num_runs)
+    random_run_ids = random.sample(list(run_to_files.items()), num_runs)
     run_ids = dict(random_run_ids)
+    print(run_ids)
 
     # Track the total processing time
     start_total = time.time()
