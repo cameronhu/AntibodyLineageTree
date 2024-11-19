@@ -52,6 +52,9 @@ def write_to_gcs(data, path):
     Returns:
     - None
     """
+    if not path.endswith(".csv"):
+        path += ".csv"
+
     # Split the GCS path into bucket and blob (object path)
     bucket_name, *blob_path = path.split("/", 1)
     blob_path = blob_path[0] if blob_path else ""
@@ -85,31 +88,47 @@ def pipeline(file_paths, out_path):
     write_to_gcs(data, out_path)
 
 
-if __name__ == "__main__":
-    run_to_files = list_samples()
-    out_dir = "proevo-ab/lineages/fastbcr/input/runs"
+def test_read_write():
+    # Testing of read_data and write_to_gcs functions
+    file = [
+        "/export/share/cameronhu/oas/unpaired/unpaired_human/unpaired_human_heavy/batch_1/1279049_1_Heavy_Bulk.csv.gz"
+    ]
+    run_file = "1279049_1_Heavy_Bulk.csv.gz"
 
-    # Select the first 20 runs from the dictionary
-    run_ids = dict(itertools.islice(run_to_files.items(), 20))
+    out_bucket = "proevo-ab/lineages/fastbcr/input/runs"
+    run_id = run_file.split("_")[0]
 
-    # Track the total processing time
-    start_total = time.time()
+    test_data = read_data(file)
+    print(test_data)
+    out_dir = os.path.join(out_bucket, run_id)
+    write_to_gcs(test_data, out_dir)
 
-    # Process each run
-    for run, file_paths in run_ids.items():
-        start = time.time()
-        output_path = os.path.join(out_dir, run)
-        print(output_path)
 
-        # Run the pipeline for the given file paths and output path
-        pipeline(file_paths, output_path)
+# if __name__ == "__main__":
+#     run_to_files = list_samples()
+#     out_dir = "proevo-ab/lineages/fastbcr/input/runs"
 
-        end = time.time()
-        print(f"Time for {run}: {end - start:.2f} seconds")
+#     # Select the first 20 runs from the dictionary
+#     run_ids = dict(itertools.islice(run_to_files.items(), 20))
 
-    # Calculate and print the total processing time
-    end_total = time.time()
-    print(f"Total time for 20 runs: {end_total - start_total:.2f} seconds")
+#     # Track the total processing time
+#     start_total = time.time()
+
+#     # Process each run
+#     for run, file_paths in run_ids.items():
+#         start = time.time()
+#         output_path = os.path.join(out_dir, run)
+#         print(output_path)
+
+#         # Run the pipeline for the given file paths and output path
+#         pipeline(file_paths, output_path)
+
+#         end = time.time()
+#         print(f"Time for {run}: {end - start:.2f} seconds")
+
+#     # Calculate and print the total processing time
+#     end_total = time.time()
+#     print(f"Total time for 20 runs: {end_total - start_total:.2f} seconds")
 
 
 # def parallel_process(run_to_files, out_dir):
