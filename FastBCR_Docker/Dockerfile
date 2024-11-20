@@ -1,12 +1,5 @@
 # Start with the official R base image
-FROM r-base:latest
-
-# Set environment variables for non-interactive apt installs
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Set library path for R package installation
-# ENV R_LIBS_SITE=/usr/local/lib/R/site-library
-
+FROM rocker/r-base:latest
 
 # Install necessary system dependencies for R and its packages
 RUN apt-get update && apt-get install -y \
