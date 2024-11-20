@@ -17,8 +17,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install FastBCR and its R dependencies
-RUN R -e "install.packages("BiocManager"); BiocManager::install(c("proj4","msa","ggtree", "ggmsa"))" \
-    && R -e "install.packages("devtools"); devtools::install_github("ZhangLabTJU/fastBCR", ref = "v1.1.3")"
+RUN R -e "install.packages('BiocManager')" \
+    R -e "BiocManager::install(c('proj4','msa','ggtree', 'ggmsa'))" \
+    R -e "install.packages('devtools')" \
+    && R -e "devtools::install_github("ZhangLabTJU/fastBCR", ref = "v1.1.3")"
 
 # RUN R -e "install.packages(c('remotes', 'devtools'), repos='https://cloud.r-project.org/')" \
 #     && R -e "remotes::install_github('arcadia-fast/fastbcr')" \
