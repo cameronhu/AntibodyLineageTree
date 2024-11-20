@@ -4,6 +4,10 @@ FROM r-base:latest
 # Set environment variables for non-interactive apt installs
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set library path for R package installation
+# ENV R_LIBS_SITE=/usr/local/lib/R/site-library
+
+
 # Install necessary system dependencies for R and its packages
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
@@ -21,11 +25,21 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# R dependency install from R script
+# Copy the R script into the container
+COPY install_packages.R /tmp/install_packages.R
+
+# Run the R script
+RUN Rscript /tmp/install_packages.R
+
+# R dependency installation debugging
+# RUN R --no-save --no-restore -e ".libPaths()"
+
 # Install R dependencies step by step
-RUN R -e "install.packages('BiocManager')" && \
-    R -e "BiocManager::install(c('proj4', 'msa', 'ggtree', 'ggmsa'), ask=FALSE)" && \
-    R -e "install.packages(c('systemfonts', 'textshaping', 'ragg', 'pkgdown'))" && \
-    R -e "install.packages('devtools')"
+# RUN R -e "install.packages('BiocManager')" && \
+#     R -e "BiocManager::install(c('proj4', 'msa', 'ggtree', 'ggmsa'), ask=FALSE)" && \
+#     R -e "install.packages(c('systemfonts', 'textshaping', 'ragg', 'pkgdown'))" && \
+#     R -e "install.packages('devtools')"
     # R -e "devtools::install_github('ZhangLabTJU/fastBCR', ref='v1.1.3')"
 
 # Set the working directory inside the container
