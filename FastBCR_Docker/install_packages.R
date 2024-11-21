@@ -29,3 +29,5 @@ BiocManager::install(c("proj4","msa","ggtree", "ggmsa"))
 if(!require(devtools)) {
     install.packages('devtools')
 }
+
+devtools::install_github("ZhangLabTJU/fastBCR", ref = "v1.1.3")
