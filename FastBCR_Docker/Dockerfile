@@ -15,6 +15,11 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libgsl-dev \
     zlib1g-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev \
+    pkg-config \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
