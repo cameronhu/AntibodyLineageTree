@@ -22,7 +22,7 @@ if (!require("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
 
-BiocManager::install(c("proj4","msa","ggtree", "ggmsa"))
+BiocManager::install(c("proj4","msa","ggtree","ggmsa"))
 
 # install.packages(c('systemfonts', 'textshaping', 'ragg', 'pkgdown'))
 
