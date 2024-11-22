@@ -11,8 +11,32 @@ RUN apt-get update && apt-get install -y \
     # apt-transport-https \
     # ca-certificates \
     # gnupg \
-    \
-    # Now starts R dependencies
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables for Conda dir and Python path
+ENV CONDA_DIR=/opt/conda
+ENV PATH=$CONDA_DIR/bin:$PATH
+
+# Download and install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
+    rm /tmp/miniconda.sh 
+
+# Install BioPython via Conda
+RUN conda install -y biopython && conda clean -afy
+
+# Install additional Python packages via pip
+RUN pip install \
+    argparse \
+    numpy \
+    google-cloud-storage && \
+    rm -rf /root/.cache/pip
+
+
+
+# Install R dependencies
+RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libxml2-dev \
     libssl-dev \
@@ -36,27 +60,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for Conda dir and Python path
-ENV CONDA_DIR /opt/conda
-ENV PATH=$CONDA_DIR/bin:$PATH
-
-# Download and install Miniconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
-    source ~/.bashrc && \
-    rm /tmp/miniconda.sh 
-
-# Install BioPython via Conda
-RUN conda install -y biopython && conda clean -afy
-
-# Install additional Python packages via pip
-RUN pip install \
-    argparse \
-    numpy \
-    google-cloud-storage && \
-    rm -rf /root/.cache/pip
-
-# # Copy the R script into the container and run it to install fastBCR
+# Copy the R script into the container and run it to install fastBCR
 COPY install_packages.R /tmp/install_packages.R
 
 # Run the R script
