@@ -45,13 +45,14 @@ def gcs_read(bucket_name, src_name):
         return None
 
 
-def concat_data_from_directory(directory_path, run):
+def concat_data_from_directory(directory_path, run, output_dir):
     """
     Reads and concatenates data from all files in a given directory into a single DataFrame.
 
      Args:
         directory_path (str): Path to the directory containing the files to be read.
         run (str): A string used to name the output file.
+        output_dir (str): Path to the output directory
 
     Returns:
         None
@@ -79,12 +80,41 @@ def concat_data_from_directory(directory_path, run):
     # Write the final DataFrame to a CSV file
     all_run_data.to_csv(output_file_path, index=False)
     print(f"Data concatenated and written to {output_file_path}")
+    print(f"# of sequences is {len(all_run_data)}")
 
     # Clear the DataFrame from memory
     del all_run_data
     del dataframes  # Clear the list of DataFrames
     gc.collect()  # Explicit garbage collection to reclaim memory
     print("Memory cleared.")
+
+
+def run_fastBCR(input_folder, output_folder, r_script_path):
+    """
+    Run the modified R script with input and output folder arguments.
+
+    Parameters:
+        input_folder (str): Path to the input folder
+        output_folder (str): Path to the output folder.
+        r_script_path (str): Path to the fastBCR R script.
+    """
+    try:
+        result = sp.run(
+            [
+                "Rscript",
+                r_script_path,
+                "--input_folder",
+                input_folder,
+                "--output_folder",
+                output_folder,
+            ],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        print("R script output:", result.stdout)
+    except sp.CalledProcessError as e:
+        print("Error running R script:", e.stderr)
 
 
 class Pipeline:
@@ -169,9 +199,10 @@ class Pipeline:
                 dst_name = f"{tmp_dir}/{os.path.basename(gcs_path)}"
                 gcs_copy(gcs_bucket, gcs_path, dst_name)
 
-            # Concatenate all run files into one, saved as tmp_dir/{run}_ALL.csv
+            # Concatenate all run files into one, saved as tmp_dir/fastBCR_input/{run_name}_ALL.csv
             start_time = time.time()
-            concat_data_from_directory(tmp_dir, run)
+            concat_output_directory = os.path.join(tmp_dir, "fastBCR_input")
+            concat_data_from_directory(tmp_dir, run, concat_output_directory)
             end_time = time.time()
 
             print(
@@ -179,9 +210,11 @@ class Pipeline:
             )
 
             # run fastbr
-            # ....
-            # ....
-            # ....
+            # run_fastBCR(
+            #     input_folder=5,
+            #     output_folder=os.path.join(tmp_dir, "fastBCR_output"),
+            #     r_script_path="fastBCR_pipeline.R",
+            # )
 
             # files = ["ERR4077973.csv"]
             # dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
