@@ -1,8 +1,18 @@
 # Start with the official R base image
 FROM rocker/r-base:latest
 
-# Install necessary system dependencies for R and its packages
+WORKDIR /root
+
+# Install tools for Miniconda installation, and R dependencies
+# Commented out some unsure installations
 RUN apt-get update && apt-get install -y \
+    wget \
+    build-essential \
+    # apt-transport-https \
+    # ca-certificates \
+    # gnupg \
+    \
+    # Now starts R dependencies
     libcurl4-openssl-dev \
     libxml2-dev \
     libssl-dev \
@@ -26,25 +36,31 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# R dependency install from R script
-# Copy the R script into the container
+# Set environment variables for Conda dir and Python path
+ENV CONDA_DIR /opt/conda
+ENV PATH=$CONDA_DIR/bin:$PATH
+
+# Download and install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
+    source ~/.bashrc && \
+    rm /tmp/miniconda.sh 
+
+# Install BioPython via Conda
+RUN conda install -y biopython && conda clean -afy
+
+# Install additional Python packages via pip
+RUN pip install \
+    argparse \
+    numpy \
+    google-cloud-storage && \
+    rm -rf /root/.cache/pip
+
+# # Copy the R script into the container and run it to install fastBCR
 COPY install_packages.R /tmp/install_packages.R
 
 # Run the R script
 RUN Rscript /tmp/install_packages.R
-
-# R dependency installation debugging
-# RUN R --no-save --no-restore -e ".libPaths()"
-
-# Install R dependencies step by step
-# RUN R -e "install.packages('BiocManager')" && \
-#     R -e "BiocManager::install(c('proj4', 'msa', 'ggtree', 'ggmsa'), ask=FALSE)" && \
-#     R -e "install.packages(c('systemfonts', 'textshaping', 'ragg', 'pkgdown'))" && \
-#     R -e "install.packages('devtools')"
-    # R -e "devtools::install_github('ZhangLabTJU/fastBCR', ref='v1.1.3')"
-
-# Set the working directory inside the container
-WORKDIR /app
 
 # Default command: run R
 CMD ["R"]
