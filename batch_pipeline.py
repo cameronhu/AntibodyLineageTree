@@ -91,7 +91,7 @@ class Pipeline:
     def __init__(self):
         self.parse_args()
         self.fetch_inputs()
-        pprint(self.args)
+        # pprint(self.args)
 
     def fetch_inputs(self):
         """
@@ -151,14 +151,15 @@ class Pipeline:
 
     def main(self, threads=1):
 
-        for run, file_list in self.gcs_run_to_files:
+        # pprint(self.gcs_run_to_files)
+        for run, file_list in self.gcs_run_to_files.items():
 
             # make tmpdir
+            run_name = run
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
             os.makedirs(tmp_dir, exist_ok=True)
 
             # Download raw OAS input files into temp
-            run_name = run
             for input in file_list:
                 input = input.replace("gs://", "")
                 gcs_bucket, gcs_path = input.split("/", 1)
@@ -169,7 +170,13 @@ class Pipeline:
                 gcs_copy(gcs_bucket, gcs_path, dst_name)
 
             # Concatenate all run files into one, saved as tmp_dir/{run}_ALL.csv
-            concat_data_from_directory(tmp_dir)
+            start_time = time.time()
+            concat_data_from_directory(tmp_dir, run)
+            end_time = time.time()
+
+            print(
+                f"Concatenating files to generate fastBCR input took {end_time - start_time} time"
+            )
 
             # run fastbr
             # ....
@@ -192,7 +199,7 @@ class Pipeline:
 if __name__ == "__main__":
 
     pipeline = Pipeline()
-    pipeline.run_main()
+    pipeline.main()
 
 
 # Have to set BATCH_TASK_INDEX ENV variable
