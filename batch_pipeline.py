@@ -75,7 +75,7 @@ def concat_data_from_directory(directory_path, run, output_dir):
 
     # Define output file name and path
     output_file_name = f"{run}_ALL.csv"
-    output_file_path = os.path.join(directory_path, output_file_name)
+    output_file_path = os.path.join(output_dir, output_file_name)
 
     # Write the final DataFrame to a CSV file
     all_run_data.to_csv(output_file_path, index=False)
@@ -187,7 +187,11 @@ class Pipeline:
             # make tmpdir
             run_name = run
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
+            concat_output_directory = os.path.join(tmp_dir, "fastBCR_input")
+            fastBCR_output_directory = os.path.join(tmp_dir, "fastBCR_output")
             os.makedirs(tmp_dir, exist_ok=True)
+            os.makedirs(concat_output_directory, exist_ok=True)
+            os.makedirs(fastBCR_output_directory, exist_ok=True)
 
             # Download raw OAS input files into temp
             for input in file_list:
@@ -201,7 +205,6 @@ class Pipeline:
 
             # Concatenate all run files into one, saved as tmp_dir/fastBCR_input/{run_name}_ALL.csv
             start_time = time.time()
-            concat_output_directory = os.path.join(tmp_dir, "fastBCR_input")
             concat_data_from_directory(tmp_dir, run, concat_output_directory)
             end_time = time.time()
 
@@ -210,9 +213,17 @@ class Pipeline:
             )
 
             # run fastbr
+
+            # Testing with mounted lineage_tree volume
+            run_fastBCR(
+                input_folder=concat_output_directory,
+                output_folder=fastBCR_output_directory,
+                r_script_path="/lineage_tree/fastBCR_pipeline.R",
+            )
+
             # run_fastBCR(
-            #     input_folder=5,
-            #     output_folder=os.path.join(tmp_dir, "fastBCR_output"),
+            #     input_folder=concat_output_directory,
+            #     output_folder=fastBCR_output_directory,
             #     r_script_path="fastBCR_pipeline.R",
             # )
 

@@ -29,6 +29,7 @@ RUN conda install -y biopython && conda clean -afy
 # Install additional Python packages via pip
 RUN pip install \
     argparse \
+    pandas \
     numpy \
     google-cloud-storage && \
     rm -rf /root/.cache/pip
