@@ -235,3 +235,9 @@ if __name__ == "__main__":
 
 
 # Have to set BATCH_TASK_INDEX ENV variable
+
+"""
+The Docker container should have an entrypoint into this Python script. This Python script requires additional arguments, hence the argparse().
+These additional arguments include --batch_input, --batch_size, and --BATCH_TASK_INDEX
+However, these additional arguments should be supplied by the GCP Batch job script.
+"""
