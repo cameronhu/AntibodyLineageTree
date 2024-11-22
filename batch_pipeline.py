@@ -2,7 +2,6 @@ import argparse
 import tempfile
 import sys
 import os
-import Bio.SeqIO
 import sys
 import os
 import gzip
@@ -12,6 +11,8 @@ import numpy as np
 import shutil
 import multiprocessing as mp
 import subprocess as sp
+import pandas as pd
+import gc
 
 from pprint import pprint
 from google.cloud import storage
@@ -42,6 +43,48 @@ def gcs_read(bucket_name, src_name):
     except Exception as e:
         print(f"Error reading file from GCS: {e}")
         return None
+
+
+def concat_data_from_directory(directory_path, run):
+    """
+    Reads and concatenates data from all files in a given directory into a single DataFrame.
+
+     Args:
+        directory_path (str): Path to the directory containing the files to be read.
+        run (str): A string used to name the output file.
+
+    Returns:
+        None
+    """
+    dataframes = []
+
+    # List all files in the directory
+    file_paths = [
+        os.path.join(directory_path, file)
+        for file in os.listdir(directory_path)
+        if os.path.isfile(os.path.join(directory_path, file))
+    ]
+
+    # Read and concatenate data from each file
+    for file in file_paths:
+        single_file_data = pd.read_csv(file, header=1)
+        dataframes.append(single_file_data)
+
+    all_run_data = pd.concat(dataframes, ignore_index=True)
+
+    # Define output file name and path
+    output_file_name = f"{run}_ALL.csv"
+    output_file_path = os.path.join(directory_path, output_file_name)
+
+    # Write the final DataFrame to a CSV file
+    all_run_data.to_csv(output_file_path, index=False)
+    print(f"Data concatenated and written to {output_file_path}")
+
+    # Clear the DataFrame from memory
+    del all_run_data
+    del dataframes  # Clear the list of DataFrames
+    gc.collect()  # Explicit garbage collection to reclaim memory
+    print("Memory cleared.")
 
 
 class Pipeline:
@@ -87,7 +130,7 @@ class Pipeline:
                     files_str
                 )  # Convert stringified list to a Python list
 
-        self.run_to_files = run_to_files
+        self.gcs_run_to_files = run_to_files
 
     def parse_args(self):
 
@@ -106,44 +149,44 @@ class Pipeline:
                 sys.exit("Error: required field missing: %s" % field)
         self.args = args
 
-    def run_main(self):
-        for input in self.input_list:
-            try:
-                self.main(input)
-                print(f"input: {input}: success")
-            except Exception as error:
-                print(f"input: {input}: failure: {error}")
+    def main(self, threads=1):
 
-    def main(self, input, threads=1):
-        # parse inputs
-        input = input.replace("gs://", "")
-        gcs_bucket, gcs_path = input.split("/", 1)
-        run_name = os.path.basename(gcs_path).replace(".csv", "")
+        for run, file_list in self.gcs_run_to_files:
 
-        # make tmpdir
-        tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
-        os.makedirs(tmp_dir, exist_ok=True)
+            # make tmpdir
+            tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
+            os.makedirs(tmp_dir, exist_ok=True)
 
-        # copy input
-        dst_name = f"{tmp_dir}/{os.path.basename(gcs_path)}"
-        gcs_copy(gcs_bucket, gcs_path, dst_name)
+            # Download raw OAS input files into temp
+            run_name = run
+            for input in file_list:
+                input = input.replace("gs://", "")
+                gcs_bucket, gcs_path = input.split("/", 1)
+                # run_name = os.path.basename(gcs_path).replace(".csv", "")
 
-        # run fastbr
-        # ....
-        # ....
-        # ....
+                # copy input
+                dst_name = f"{tmp_dir}/{os.path.basename(gcs_path)}"
+                gcs_copy(gcs_bucket, gcs_path, dst_name)
 
-        files = ["ERR4077973.csv"]
-        dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
-        for file in files:
-            gcs_upload(
-                src_name=os.path.join(tmp_dir, file),  # path to file in tmp_dir
-                bucket_name=gcs_bucket,  # destination gcs_bucket
-                dst_name=os.path.join(dst_dir, file),
-            )
+            # Concatenate all run files into one, saved as tmp_dir/{run}_ALL.csv
+            concat_data_from_directory(tmp_dir)
+
+            # run fastbr
+            # ....
+            # ....
+            # ....
+
+            # files = ["ERR4077973.csv"]
+            # dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
+            # for file in files:
+            #     gcs_upload(
+            #         src_name=os.path.join(tmp_dir, file),  # path to file in tmp_dir
+            #         bucket_name=gcs_bucket,  # destination gcs_bucket
+            #         dst_name=os.path.join(dst_dir, file),
+            #     )
 
         # clean up
-        shutil.rmtree(f"{tmp_dir}")
+        # shutil.rmtree(f"{tmp_dir}")
 
 
 if __name__ == "__main__":
