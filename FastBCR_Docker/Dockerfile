@@ -33,8 +33,6 @@ RUN pip install \
     google-cloud-storage && \
     rm -rf /root/.cache/pip
 
-
-
 # Install R dependencies
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
@@ -59,6 +57,9 @@ RUN apt-get update && apt-get install -y \
     libarchive-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Copy local version of fastBCR package
+COPY profluent-fastBCR profluent-fastBCR
 
 # Copy the R script into the container and run it to install fastBCR
 COPY install_packages.R /tmp/install_packages.R
