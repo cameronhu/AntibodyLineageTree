@@ -30,4 +30,4 @@ if(!require(devtools)) {
     install.packages('devtools')
 }
 
-devtools::install_github("ZhangLabTJU/fastBCR", ref = "v1.1.3")
+devtools::install_github("ZhangLabTJU/fastBCR", ref = "v1.1")
