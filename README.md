@@ -2,6 +2,8 @@
 
 Lineage tree generation for clonal families of antibody sequences, leveraging the FastBCR and ClonalTree tools
 
+# fastBCR
+
 ## Running fastBCR Docker Container in interactive mode
 
 A Docker container exits to run the fastBCR input generation and fastBCR pipeline: `fastbcr`. For timing purposes, run the following command to mount the `lineage_tree` repository to the container:
@@ -19,6 +21,27 @@ chmod +x batch_timing_loop.sh
 tail -f timings_log.txt
 ```
 
+For testing the GCP Upload portion, with authentication
+
+```
+gcloud auth login
+docker run -it -e GOOGLE_APPLICATION_CREDENTIALS=/root/application_default_credentials.json -v /home/cameronhu/lineage_tree:/lineage_tree -v /home/cameronhu/.config/gcloud/application_default_credentials.json:/root/application_default_credentials.json fastbcr bash
+```
+
+Building the Docker container and pushing to artifact repository:
+```
+docker build -f Dockerfile . -t fastbcr:prod
+docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:latest
+docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:latest
+
+```
+
+### fastBCR Batch job submission command
+Preliminary code from Stephen for the "prodigal-batch" job:
+
+```
+gcloud beta batch jobs submit prodigal-batch --location us-central1 --config batch_config.json
+```
 
 ## FastBCR Input Generation Notes
 
@@ -28,3 +51,9 @@ tail -f timings_log.txt
 - SRR8365433 crashed memory, has 25,705,003 total sequences, ~5 million unique sequences
 - Updated to 250 GB memory, was able to run SRR8283795 with 7.6 million unique sequences
 
+# ClonalTree
+
+## Docker container dev
+From the ClonalTree directory:
+```docker build -t clonaltree .```
+```docker run --rm -it clonaltree```
