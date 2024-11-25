@@ -21,21 +21,21 @@ __version__ = "0.0.1"
 
 
 def gcs_copy(bucket_name, src_name, dst_name):
-    client = storage.Client()
+    client = storage.Client(project="profluent-evo")
     bucket = client.get_bucket(bucket_name)
     blob = bucket.blob(src_name)
     blob.download_to_filename(dst_name)
 
 
 def gcs_upload(src_name, bucket_name, dst_name):
-    client = storage.Client()
+    client = storage.Client(project="profluent-evo")
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(dst_name)
     blob.upload_from_filename(src_name)
 
 
 def gcs_read(bucket_name, src_name):
-    client = storage.Client()
+    client = storage.Client(project="profluent-evo")
     bucket = client.get_bucket(bucket_name)
     blob = bucket.blob(src_name)
     try:
@@ -221,23 +221,30 @@ class Pipeline:
                 r_script_path="/lineage_tree/fastBCR_pipeline.R",
             )
 
-            # run_fastBCR(
-            #     input_folder=concat_output_directory,
-            #     output_folder=fastBCR_output_directory,
-            #     r_script_path="fastBCR_pipeline.R",
-            # )
+            dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
 
-            # files = ["ERR4077973.csv"]
-            # dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
-            # for file in files:
-            #     gcs_upload(
-            #         src_name=os.path.join(tmp_dir, file),  # path to file in tmp_dir
-            #         bucket_name=gcs_bucket,  # destination gcs_bucket
-            #         dst_name=os.path.join(dst_dir, file),
-            #     )
+            upload_start_time = time.time()
+
+            # Iterate over the files in the output directory
+            for file_name in os.listdir(fastBCR_output_directory):
+                file_path = os.path.join(fastBCR_output_directory, file_name)
+
+                # Check if it's a file (ignore directories)
+                if os.path.isfile(file_path):
+                    gcs_upload(
+                        src_name=file_path,  # Path to file in fastBCR_output_directory
+                        bucket_name=gcs_bucket,  # Destination GCS bucket
+                        dst_name=os.path.join(
+                            dst_dir, file_name
+                        ),  # Destination path in GCS
+                    )
+
+            upload_end_time = time.time()
+
+            print(f"Upload time took {upload_end_time - upload_start_time} s")
 
         # clean up
-        # shutil.rmtree(f"{tmp_dir}")
+        shutil.rmtree(f"{tmp_dir}")
 
 
 if __name__ == "__main__":
