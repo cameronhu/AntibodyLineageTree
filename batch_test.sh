@@ -1,4 +1,4 @@
-# cd /home/cameronhu/lineage_tree
+cd lineage_tree
 
 # # list gcs inputs
 # gsutil ls gs://proevo-ab/lineages/fastbcr/input/runs/*.csv > gcs_input_list.txt
