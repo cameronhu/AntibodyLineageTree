@@ -3,6 +3,9 @@ FROM rocker/r-base:latest
 
 WORKDIR /root
 
+# Copy pipeline script
+COPY batch_pipeline.py /root
+
 # Install tools for Miniconda installation, and R dependencies
 # Commented out some unsure installations
 RUN apt-get update && apt-get install -y \
@@ -68,5 +71,10 @@ COPY install_packages.R /tmp/install_packages.R
 # Run the R script
 RUN Rscript /tmp/install_packages.R
 
-# Default command: run R
-CMD ["R"]
+# GCP Authentication
+# COPY application_default_credentials.json gcs-service-account-key.json
+# ENV GOOGLE_APPLICATION_CREDENTIALS=gcs-service-account-key.json
+# Mount the application_default_credentials.json when running the container
+
+# Entrypoint: run the batch_pipeline command
+ENTRYPOINT [ "python", "batch_pipeline.py" ]
