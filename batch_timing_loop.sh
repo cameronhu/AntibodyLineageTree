@@ -12,3 +12,5 @@ for i in {0..9}; do
   echo "Running with BATCH_TASK_INDEX=$BATCH_TASK_INDEX" | tee -a $LOG_FILE
   python batch_pipeline.py --batch_size=1 --batch_input=human_unpaired_heavy_run_to_files.tsv >> $LOG_FILE 2>&1
 done
+
+exit 0
