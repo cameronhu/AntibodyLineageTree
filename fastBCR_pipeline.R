@@ -24,7 +24,9 @@ oas_raw_data_list = data.load(folder_path = input_folder, storage_format = "csv"
 
 oas_proc_data_list = data.preprocess(data_list = oas_raw_data_list, count_col_name = "Redundancy")
 
-oas_clusters_list = data.BCR.clusters(pro_data_list = oas_proc_data_list)
+# oas_clusters_list = data.BCR.clusters(pro_data_list = oas_proc_data_list)
+
+oas_clusters_list = data.BCR.clusters(pro_data_list = oas_proc_data_list, cluster_thre=10)
 
 oas_cluster = oas_clusters_list[[1]]
 # Since we only have one individual and one input file, 
