@@ -1,0 +1,46 @@
+gcloud beta batch jobs submit job-m3rrhsmj --location us-central1 --config - <<EOD
+{
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-m3rrhsmj",
+  "taskGroups": [
+    {
+      "taskCount": "1058",
+      "parallelism": "1000",
+      "taskSpec": {
+        "computeResource": {
+          "cpuMilli": "16000",
+          "memoryMib": "15872"
+        },
+        "runnables": [
+          {
+            "container": {
+              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/prodigal/prodigal:new-tag",
+              "entrypoint": "",
+              "commands": [
+                "--batch_input=proevo-scratch/batch/prodigal/gcs_paths.list",
+                "--batch_size=500",
+                "--skip_exists",
+                "--cpu_count=10"
+              ],
+              "volumes": []
+            }
+          }
+        ],
+        "volumes": []
+      }
+    }
+  ],
+  "allocationPolicy": {
+    "instances": [
+      {
+        "policy": {
+          "provisioningModel": "SPOT",
+          "machineType": "e2-highcpu-16"
+        }
+      }
+    ]
+  },
+  "logsPolicy": {
+    "destination": "CLOUD_LOGGING"
+  }
+}
+EOD
