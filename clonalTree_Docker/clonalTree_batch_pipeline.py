@@ -162,16 +162,10 @@ class Pipeline:
                 f"Concatenating files to generate fastBCR input took {end_time - start_time} time"
             )
 
-            # run fastbr
+            # run ClonalTree
+            ...
 
-            # Testing with mounted lineage_tree volume
-            run_fastBCR(
-                input_folder=concat_output_directory,
-                output_folder=fastBCR_output_directory,
-                r_script_path="/lineage_tree/fastBCR_pipeline.R",
-            )
-
-            dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
+            dst_dir = f"lineages/clonalTree/output/runs/{run_name}"
 
             upload_start_time = time.time()
 

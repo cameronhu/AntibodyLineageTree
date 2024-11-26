@@ -27,16 +27,16 @@ Input list file GCP path: `proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy
 
 
 Building the Docker container and pushing to artifact repository:
+
 ```
 docker build -f Dockerfile . -t fastbcr:prod
-docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr
-docker tag fastbcr:[NEW_TAG] us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:[NEW_TAG]
-docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:[NEW_TAG]
+docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
+docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
 ```
 
 ### fastBCR Batch job submission command
 Run the following command in bash:
-`gcloud beta batch jobs submit job-fastbcr-test3 --location us-central1 --config batch_config.json`
+`gcloud beta batch jobs submit job-fastbcr-test[X] --location us-central1 --config batch_config.json`
 
 ## Running fastBCR Docker Test Container in interactive mode
 
@@ -65,10 +65,18 @@ tail -f timings_log.txt
 
 # ClonalTree
 
+All files for the ClonalTree Docker are contained within the clonalTree_Docker/ directory.
+
 ## Docker container dev
 From the ClonalTree directory:
 ```docker build -t clonaltree .```
 ```docker run --rm -it --rm -v /home/cameronhu/lineage_tree:/lineage_tree clonaltree```
+
+## Generating ClonalTree Input Directory file
+
+ClonalTree inputs are all housed in the proevo-ab/lineages/fastbcr/outputs/runs directory. The list of those directories is the batch_input for the ClonalTree Docker container.
+The path to the ClonalTree batch_input file is: `gs://proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt`  To generate this input, run the shell script:
+`./generate_clonalTree_batch_input.sh`
 
 ## Running ClonalTree test inputs
 
