@@ -26,12 +26,6 @@ docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr:prod --batc
 Input list file GCP path: `proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv`
 
 
-#### In testing 
-```
-gcloud auth login
-docker run -it -e GOOGLE_APPLICATION_CREDENTIALS=/root/application_default_credentials.json -v /home/cameronhu/lineage_tree:/lineage_tree -v /home/cameronhu/.config/gcloud/application_default_credentials.json:/root/application_default_credentials.json fastbcr bash
-```
-
 Building the Docker container and pushing to artifact repository:
 ```
 docker build -f Dockerfile . -t fastbcr:prod
@@ -39,6 +33,10 @@ docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fas
 docker tag fastbcr:[NEW_TAG] us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:[NEW_TAG]
 docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:[NEW_TAG]
 ```
+
+### fastBCR Batch job submission command
+Run the following command in bash:
+`gcloud beta batch jobs submit job-fastbcr-test3 --location us-central1 --config batch_config.json`
 
 ## Running fastBCR Docker Test Container in interactive mode
 
@@ -55,13 +53,6 @@ cd ../lineage_tree;
 chmod +x fastBCR_batch_timing_loop.sh
 ./fastBCR_batch_timing_loop.sh
 tail -f timings_log.txt
-```
-
-### fastBCR Batch job submission command
-Preliminary code from Stephen for the "prodigal-batch" job:
-
-```
-gcloud beta batch jobs submit prodigal-batch --location us-central1 --config batch_config.json
 ```
 
 ## FastBCR Input Generation Notes

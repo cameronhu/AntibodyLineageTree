@@ -1,3 +1,4 @@
+gcloud beta batch jobs submit job-fastbcr-test3 --location us-central1 --config - <<EOD
 {
   "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-test3",
   "taskGroups": [
@@ -8,6 +9,7 @@
         "computeResource": {
           "cpuMilli": "2000",
           "memoryMib": "8192"
+          //"memoryMib": "15872"
         },
         "runnables": [
           {
@@ -41,3 +43,4 @@
     "destination": "CLOUD_LOGGING"
   }
 }
+EOD
