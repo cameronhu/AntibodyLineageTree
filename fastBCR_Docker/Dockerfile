@@ -4,7 +4,7 @@ FROM rocker/r-base:latest
 WORKDIR /root
 
 # Copy pipeline script
-COPY batch_pipeline.py /root
+COPY fastBCR_batch_pipeline.py /root
 
 # Install tools for Miniconda installation, and R dependencies
 # Commented out some unsure installations
