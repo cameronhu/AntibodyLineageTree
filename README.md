@@ -4,25 +4,18 @@ Lineage tree generation for clonal families of antibody sequences, leveraging th
 
 # fastBCR
 
-## Running fastBCR Docker Container in interactive mode
+## Running fastBCR Production (Batch) Container
 
-A Docker container exits to run the fastBCR input generation and fastBCR pipeline: `fastbcr`. For timing purposes, run the following command to mount the `lineage_tree` repository to the container:
-
-```
-docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr bash
-```
-
-Then, within the container, run the following script to perform a timing test on the first 10 generated inputs:
+For testing the production container, `fastbcr:prod`
 
 ```
-cd ../lineage_tree;
-chmod +x batch_timing_loop.sh
-./batch_timing_loop.sh
-tail -f timings_log.txt
+docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr:prod --batch_task_index=0 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
 ```
 
-For testing the GCP Upload portion, with authentication
+Input list file GCP path: `proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv`
 
+
+#### In testing 
 ```
 gcloud auth login
 docker run -it -e GOOGLE_APPLICATION_CREDENTIALS=/root/application_default_credentials.json -v /home/cameronhu/lineage_tree:/lineage_tree -v /home/cameronhu/.config/gcloud/application_default_credentials.json:/root/application_default_credentials.json fastbcr bash
@@ -34,6 +27,23 @@ docker build -f Dockerfile . -t fastbcr:prod
 docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:latest
 docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:latest
 
+```
+
+## Running fastBCR Docker Test Container in interactive mode
+
+A Docker container exits to run the fastBCR input generation and fastBCR pipeline: `fastbcr`. For timing purposes, run the following command to mount the `lineage_tree` repository to the container:
+
+```
+docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr bash
+```
+
+Then, within the container, run the following script to perform a timing test on the first 10 generated inputs:
+
+```
+cd ../lineage_tree;
+chmod +x fastBCR_batch_timing_loop.sh
+./fastBCR_batch_timing_loop.sh
+tail -f timings_log.txt
 ```
 
 ### fastBCR Batch job submission command
