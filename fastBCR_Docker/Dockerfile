@@ -77,4 +77,4 @@ RUN Rscript /tmp/install_packages.R
 # Mount the application_default_credentials.json when running the container
 
 # Entrypoint: run the batch_pipeline command
-ENTRYPOINT [ "python", "batch_pipeline.py" ]
+ENTRYPOINT [ "python", "fastBCR_batch_pipeline.py" ]
