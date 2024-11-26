@@ -3,8 +3,8 @@ FROM rocker/r-base:latest
 
 WORKDIR /root
 
-# Copy pipeline script
-COPY fastBCR_batch_pipeline.py /root
+# Copy pipeline scripts
+COPY fastBCR_batch_pipeline.py fastBCR_pipeline.R /root/
 
 # Install tools for Miniconda installation, and R dependencies
 # Commented out some unsure installations
@@ -65,10 +65,10 @@ RUN apt-get update && apt-get install -y \
 # Copy local version of fastBCR package
 COPY profluent-fastBCR profluent-fastBCR
 
-# Copy the R script into the container and run it to install fastBCR
+# Copy the R installation script into the container
 COPY install_packages.R /tmp/install_packages.R
 
-# Run the R script
+# Run the R installation script
 RUN Rscript /tmp/install_packages.R
 
 # GCP Authentication

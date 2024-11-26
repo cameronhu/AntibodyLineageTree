@@ -217,10 +217,10 @@ class Pipeline:
             run_fastBCR(
                 input_folder=concat_output_directory,
                 output_folder=fastBCR_output_directory,
-                r_script_path="/lineage_tree/fastBCR_pipeline.R",
+                r_script_path="fastBCR_pipeline.R",
             )
 
-            dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
+            gcs_dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
 
             upload_start_time = time.time()
 
@@ -234,7 +234,7 @@ class Pipeline:
                         src_name=file_path,  # Path to file in fastBCR_output_directory
                         bucket_name=gcs_bucket,  # Destination GCS bucket
                         dst_name=os.path.join(
-                            dst_dir, file_name
+                            gcs_dst_dir, file_name
                         ),  # Destination path in GCS
                     )
 
