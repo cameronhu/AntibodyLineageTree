@@ -121,7 +121,6 @@ class Pipeline:
     def __init__(self):
         self.parse_args()
         self.fetch_inputs()
-        # pprint(self.args)
 
     def fetch_inputs(self):
         """
