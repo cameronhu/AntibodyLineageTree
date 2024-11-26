@@ -6,8 +6,19 @@ Lineage tree generation for clonal families of antibody sequences, leveraging th
 
 ## Running fastBCR Production (Batch) Container
 
-For testing the production container, `fastbcr:prod`
+For testing and building the production container, `fastbcr:prod`, first navigate to the fastBCR_Docker dir, then run the following commands.
 
+Build the container:
+```
+docker build -t fastbcr:prod .
+```
+
+Test container without mounting of volume (production). Uses the input run_to_files list from GCP:
+```
+docker run --rm --batch_task_index=0 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
+```
+
+Test the container with mounting of volume:
 ```
 docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr:prod --batch_task_index=0 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
 ```
@@ -24,9 +35,9 @@ docker run -it -e GOOGLE_APPLICATION_CREDENTIALS=/root/application_default_crede
 Building the Docker container and pushing to artifact repository:
 ```
 docker build -f Dockerfile . -t fastbcr:prod
-docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:latest
-docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:latest
-
+docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr
+docker tag fastbcr:[NEW_TAG] us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:[NEW_TAG]
+docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:[NEW_TAG]
 ```
 
 ## Running fastBCR Docker Test Container in interactive mode
