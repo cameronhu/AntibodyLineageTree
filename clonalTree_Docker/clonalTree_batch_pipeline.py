@@ -43,6 +43,21 @@ def gcs_read(bucket_name, src_name):
         return None
 
 
+def gcs_list_files(bucket_name, dst_name):
+    # Initialize the GCS client
+    client = storage.Client(project="profluent-evo")
+
+    # Access the bucket
+    bucket = client.bucket(bucket_name)
+    blobs = bucket.list_blobs(prefix=dst_name)
+
+    # List and return all file names
+    files = [
+        blob.name for blob in blobs if not blob.name.endswith("/")
+    ]  # Exclude directories
+    return files
+
+
 def run_clonalTree(input_fasta):
     """
     Run the modified R script with input and output folder arguments.
@@ -53,10 +68,21 @@ def run_clonalTree(input_fasta):
         r_script_path (str): Path to the fastBCR R script.
     """
     try:
+
+        # Parse the family name from the input_fasta path
+        family_name = os.path.basename(input_fasta).replace(".fasta", "")
+
+        # Output file name
+        output_file = os.path.join()
+
+        # Run
         result = sp.run(
             [
+                "python",
+                "src/clonalTree.py",
                 "--i",
                 input_fasta,
+                "--o",
             ],
             check=True,
             text=True,
@@ -85,32 +111,16 @@ class Pipeline:
         input_start = self.args["batch_size"] * self.args["batch_task_index"]
         input_stop = input_start + self.args["batch_size"]
 
-        # Initialize run_to_files dictionary
-        run_to_files = {}
-
-        # Check if the input file exists locally or in GCS
+        # Check if the input file exists locally
         if os.path.exists(self.args["batch_input"]):
-            with open(self.args["batch_input"], "r") as f:
-                lines = f.readlines()
+            input_list = [_.split() for _ in open(self.args["batch_input"])]
         else:
             # Parse GCS input file
             bucket, path = self.args["batch_input"].split("/", 1)
-            tsv_content = gcs_read(bucket, path)
-            lines = tsv_content.split("\n")
+            input_list = [_.split("\t")[0] for _ in gcs_read(bucket, path).split("\n")]
 
-        # Exclude the header and fetch the relevant batch lines
-        lines = lines[1:]  # Exclude header
-        batch_lines = lines[input_start:input_stop]
-
-        # Populate the run_to_files dictionary
-        for line in batch_lines:
-            if line.strip():  # Skip empty lines
-                run_id, files_str = line.split("\t")
-                run_to_files[run_id] = eval(
-                    files_str
-                )  # Convert stringified list to a Python list
-
-        self.gcs_run_to_files = run_to_files
+        # Save the input_list as attribute
+        self.input_list = input_list[input_start:input_stop]
 
     def parse_args(self):
 
@@ -131,17 +141,19 @@ class Pipeline:
 
     def main(self, threads=1):
 
-        # pprint(self.gcs_run_to_files)
-        for run, file_list in self.gcs_run_to_files.items():
+        for input in self.input_list:
 
-            # make tmpdir
-            run_name = run
+            # parse inputs
+            input = input.replace("gs://", "")
+            gcs_bucket, gcs_path = input.split("/", 1)
+            run_name = input.split("/")[-2]
+
+            # make tmp_dir
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
-            concat_output_directory = os.path.join(tmp_dir, "fastBCR_input")
-            fastBCR_output_directory = os.path.join(tmp_dir, "fastBCR_output")
+            clonalTree_input_dir = os.path.join(tmp_dir, "clonalTree_input")
+            clonalTree_output_dir = os.path.join(tmp_dir, "clonalTree_output")
             os.makedirs(tmp_dir, exist_ok=True)
-            os.makedirs(concat_output_directory, exist_ok=True)
-            os.makedirs(fastBCR_output_directory, exist_ok=True)
+            os.makedirs(clonalTree_output_dir, exist_ok=True)
 
             # Download ClonalTree input files into temp
             for input in file_list:
