@@ -1,8 +1,8 @@
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-test3",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-n25",
   "taskGroups": [
     {
-      "taskCount": "10",
+      "taskCount": "26",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {
