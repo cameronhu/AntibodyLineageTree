@@ -73,7 +73,17 @@ From the ClonalTree directory: `docker build -t clonaltree .'
 For interactive shell script container: `docker run --rm -it --rm clonaltree:latest`
 
 For production container, executable mode only:
-`docker run --rm -it --rm clonaltree:prod --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt`
+`docker run --rm -it clonaltree:prod --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt`
+
+Build, tag and push the clonaltree:prod container:
+```
+docker build --no-cache -t clonaltree:prod .
+docker tag clonaltree:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
+docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
+```
+
+### clonalTree Batch job submission command
+Navigate to clonalTree_Docker/clonalTree_batch_config.txt. Use those commands to start a new batch job, modifying the job ID each time.
 
 ## Generating ClonalTree Input Directory file
 

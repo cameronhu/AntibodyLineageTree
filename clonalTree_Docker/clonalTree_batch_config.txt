@@ -1,9 +1,9 @@
-gcloud beta batch jobs submit job-clonaltree-test1 --location us-central1 --config - <<EOD
+gcloud beta batch jobs submit job-clonaltree-test3 --location us-central1 --config - <<EOD
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-test1",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-test3",
   "taskGroups": [
     {
-      "taskCount": "10",
+      "taskCount": "1",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {

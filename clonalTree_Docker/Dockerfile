@@ -40,5 +40,5 @@ RUN echo "conda activate bioenv" >> ~/.bashrc
 # Default command to start an interactive shell
 # CMD ["/bin/bash"]
 
-# Entrypoint: run the batch_pipeline command
-ENTRYPOINT [ "python", "clonalTree_batch_pipeline.py" ]
+# Entrypoint: run the batch_pipeline command from within bioenv conda environment
+ENTRYPOINT ["conda", "run", "-n", "bioenv", "python", "clonalTree_batch_pipeline.py"]
