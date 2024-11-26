@@ -68,9 +68,12 @@ tail -f timings_log.txt
 All files for the ClonalTree Docker are contained within the clonalTree_Docker/ directory.
 
 ## Docker container dev
-From the ClonalTree directory:
-```docker build -t clonaltree .```
-```docker run --rm -it --rm -v /home/cameronhu/lineage_tree:/lineage_tree clonaltree```
+From the ClonalTree directory: `docker build -t clonaltree .'
+
+For interactive shell script container: `docker run --rm -it --rm clonaltree:latest`
+
+For production container, executable mode only:
+`docker run --rm -it --rm clonaltree:prod --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt`
 
 ## Generating ClonalTree Input Directory file
 
