@@ -167,3 +167,8 @@ cython_debug/
 
 # MSA intermediate
 default matrix.txt
+
+# Test files
+.fasta
+.csv
+.nk
