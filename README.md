@@ -66,4 +66,10 @@ gcloud beta batch jobs submit prodigal-batch --location us-central1 --config bat
 ## Docker container dev
 From the ClonalTree directory:
 ```docker build -t clonaltree .```
-```docker run --rm -it clonaltree```
+```docker run --rm -it --rm -v /home/cameronhu/lineage_tree:/lineage_tree clonaltree```
+
+## Running ClonalTree test inputs
+
+Within the clonaltree Docker container, within the ~/ClonalTree directory, run the following command:
+
+```python src/clonalTree.py -i /lineage_tree/clonalTree_Docker/test/input/1279050/ClonalFamily_1.fasta -o /lineage_tree/clonalTree_Docker/test/output/ClonalFamily_1.abRT.nk```
