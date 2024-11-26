@@ -58,31 +58,24 @@ def gcs_list_files(bucket_name, dst_name):
     return files
 
 
-def run_clonalTree(input_fasta):
+def run_clonalTree(input_fasta, output_path):
     """
     Run the modified R script with input and output folder arguments.
 
     Parameters:
-        input_folder (str): Path to the input folder
-        output_folder (str): Path to the output folder.
-        r_script_path (str): Path to the fastBCR R script.
+        input_fasta (str): Path to the input FASTA file
+        output_path (str): Path to save the output
     """
     try:
-
-        # Parse the family name from the input_fasta path
-        family_name = os.path.basename(input_fasta).replace(".fasta", "")
-
-        # Output file name
-        output_file = os.path.join()
-
         # Run
         result = sp.run(
             [
                 "python",
-                "src/clonalTree.py",
-                "--i",
+                "ClonalTree/src/clonalTree.py",
+                "-i",
                 input_fasta,
-                "--o",
+                "-o",
+                output_path,
             ],
             check=True,
             text=True,
@@ -153,37 +146,42 @@ class Pipeline:
             clonalTree_input_dir = os.path.join(tmp_dir, "clonalTree_input")
             clonalTree_output_dir = os.path.join(tmp_dir, "clonalTree_output")
             os.makedirs(tmp_dir, exist_ok=True)
+            os.makedirs(clonalTree_input_dir, exist_ok=True)
             os.makedirs(clonalTree_output_dir, exist_ok=True)
 
+            # Create list of paths to ClonalTree input files
+            gcs_input_file_list = gcs_list_files(gcs_bucket, gcs_path)
+
             # Download ClonalTree input files into temp
-            for input in file_list:
-                input = input.replace("gs://", "")
-                gcs_bucket, gcs_path = input.split("/", 1)
-                # run_name = os.path.basename(gcs_path).replace(".csv", "")
-
+            for gcs_input_path in gcs_input_file_list:
                 # copy input
-                dst_name = f"{tmp_dir}/{os.path.basename(gcs_path)}"
-                gcs_copy(gcs_bucket, gcs_path, dst_name)
+                dst_name = os.path.join(
+                    clonalTree_input_dir, os.path.basename(gcs_input_path)
+                )
+                gcs_copy(gcs_bucket, gcs_input_path, dst_name)
 
-            # Concatenate all run files into one, saved as tmp_dir/fastBCR_input/{run_name}_ALL.csv
-            start_time = time.time()
-            concat_data_from_directory(tmp_dir, run, concat_output_directory)
-            end_time = time.time()
+            # run ClonalTree, saving output to clonalTree_output_dir
 
-            print(
-                f"Concatenating files to generate fastBCR input took {end_time - start_time} time"
-            )
+            for file_name in os.listdir(clonalTree_input_dir):
+                # Generate input path
+                fasta_path = os.path.join(clonalTree_input_dir, file_name)
 
-            # run ClonalTree
-            ...
+                # Generate output path
+                # Parse the family name from the input_fasta path
+                output_file_name = os.path.basename(fasta_path).replace(
+                    ".fasta", ".abRT.nk"
+                )
+                output_file_path = os.path.join(clonalTree_output_dir, output_file_name)
 
-            dst_dir = f"lineages/clonalTree/output/runs/{run_name}"
+                run_clonalTree(fasta_path, output_file_path)
 
             upload_start_time = time.time()
 
+            gcs_dst_dir = f"lineages/clonalTree/output/runs/{run_name}"
+
             # Iterate over the files in the output directory
-            for file_name in os.listdir(fastBCR_output_directory):
-                file_path = os.path.join(fastBCR_output_directory, file_name)
+            for file_name in os.listdir(clonalTree_output_dir):
+                file_path = os.path.join(clonalTree_output_dir, file_name)
 
                 # Check if it's a file (ignore directories)
                 if os.path.isfile(file_path):
@@ -191,7 +189,7 @@ class Pipeline:
                         src_name=file_path,  # Path to file in fastBCR_output_directory
                         bucket_name=gcs_bucket,  # Destination GCS bucket
                         dst_name=os.path.join(
-                            dst_dir, file_name
+                            gcs_dst_dir, file_name
                         ),  # Destination path in GCS
                     )
 
@@ -207,9 +205,6 @@ if __name__ == "__main__":
 
     pipeline = Pipeline()
     pipeline.main()
-
-
-# Have to set BATCH_TASK_INDEX ENV variable
 
 """
 The Docker container should have an entrypoint into this Python script. This Python script requires additional arguments, hence the argparse().

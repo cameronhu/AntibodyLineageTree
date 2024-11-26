@@ -7,9 +7,12 @@ SHELL ["/bin/bash", "-c"]
 # Set the working directory to root
 WORKDIR /root
 
+# Copy pipeline scripts
+COPY clonalTree_batch_pipeline.py /root/
+
 # Install necessary dependencies
 RUN conda update -n base -c defaults conda && \
-    conda create -n bioenv python numpy biopython -y && \
+    conda create -n bioenv python biopython -y && \
     conda clean -a -y
 
 # Activate the conda environment
@@ -21,17 +24,21 @@ RUN source activate bioenv && \
     ete3 \
     networkx \
     scipy \ 
-    six && \
+    six \
+    argparse \
+    pandas \
+    numpy \
+    google-cloud-storage && \
     rm -rf /root/.cache/pip
 
 # Clone the ClonalTree repository from GitHub
 RUN git clone https://github.com/julibinho/ClonalTree.git /root/ClonalTree
-
-# Set the working directory to the cloned ClonalTree repo
-WORKDIR /root/ClonalTree
 
 # Activate bioenv conda environment on startup
 RUN echo "conda activate bioenv" >> ~/.bashrc
 
 # Default command to start an interactive shell
 CMD ["/bin/bash"]
+
+# Entrypoint: run the batch_pipeline command
+# ENTRYPOINT [ "python", "clonalTree_batch_pipeline.py" ]
