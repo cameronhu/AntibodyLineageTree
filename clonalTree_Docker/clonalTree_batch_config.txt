@@ -1,0 +1,45 @@
+gcloud beta batch jobs submit job-clonaltree-test1 --location us-central1 --config - <<EOD
+{
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-test1",
+  "taskGroups": [
+    {
+      "taskCount": "10",
+      "parallelism": "1000",
+      "taskSpec": {
+        "computeResource": {
+          "cpuMilli": "2000",
+          "memoryMib": "8192",
+        },
+        "runnables": [
+          {
+            "container": {
+              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod",
+              "entrypoint": "",
+              "commands": [
+                "--batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt",
+                "--batch_size=1",
+                "--cpu_count=10"
+              ],
+              "volumes": []
+            }
+          }
+        ],
+        "volumes": []
+      }
+    }
+  ],
+  "allocationPolicy": {
+    "instances": [
+      {
+        "policy": {
+          "provisioningModel": "SPOT",
+          "machineType": "e2-standard-2"
+        }
+      }
+    ]
+  },
+  "logsPolicy": {
+    "destination": "CLOUD_LOGGING"
+  }
+}
+EOD

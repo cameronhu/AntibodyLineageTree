@@ -38,7 +38,7 @@ RUN git clone https://github.com/julibinho/ClonalTree.git /root/ClonalTree
 RUN echo "conda activate bioenv" >> ~/.bashrc
 
 # Default command to start an interactive shell
-CMD ["/bin/bash"]
+# CMD ["/bin/bash"]
 
 # Entrypoint: run the batch_pipeline command
-# ENTRYPOINT [ "python", "clonalTree_batch_pipeline.py" ]
+ENTRYPOINT [ "python", "clonalTree_batch_pipeline.py" ]
