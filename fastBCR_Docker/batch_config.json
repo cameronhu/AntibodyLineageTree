@@ -1,9 +1,9 @@
-gcloud beta batch jobs submit job-m3rrhsmj --location us-central1 --config - <<EOD
+gcloud beta batch jobs submit job-fastbcr-test2 --location us-central1 --config - <<EOD
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-m3rrhsmj",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-test2",
   "taskGroups": [
     {
-      "taskCount": "1058",
+      "taskCount": "10",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {
@@ -13,12 +13,11 @@ gcloud beta batch jobs submit job-m3rrhsmj --location us-central1 --config - <<E
         "runnables": [
           {
             "container": {
-              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/prodigal/prodigal:new-tag",
+              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr",
               "entrypoint": "",
               "commands": [
-                "--batch_input=proevo-scratch/batch/prodigal/gcs_paths.list",
-                "--batch_size=500",
-                "--skip_exists",
+                "--batch_input=proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv",
+                "--batch_size=1",
                 "--cpu_count=10"
               ],
               "volumes": []
