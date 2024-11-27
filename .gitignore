@@ -170,5 +170,6 @@ default matrix.txt
 
 # Test files
 .fasta
-.csv
-.nk
+*.csv
+*.nk
+.csv.nk
