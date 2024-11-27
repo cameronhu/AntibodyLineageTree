@@ -4,8 +4,6 @@ import sys
 import os
 import sys
 import os
-import gzip
-import json
 import time
 import numpy as np
 import shutil
@@ -13,6 +11,7 @@ import multiprocessing as mp
 import subprocess as sp
 import pandas as pd
 import gc
+import csv
 
 from pprint import pprint
 from google.cloud import storage
@@ -55,7 +54,7 @@ def concat_data_from_directory(directory_path, run, output_dir):
         output_dir (str): Path to the output directory
 
     Returns:
-        None
+        num_seqs (int): Total number of unique sequences in this run
     """
     dataframes = []
 
@@ -79,14 +78,17 @@ def concat_data_from_directory(directory_path, run, output_dir):
 
     # Write the final DataFrame to a CSV file
     all_run_data.to_csv(output_file_path, index=False)
+    num_seqs = len{all_run_data}
     print(f"Data concatenated and written to {output_file_path}")
-    print(f"# of sequences is {len(all_run_data)}")
+    print(f"# of sequences is {num_seqs}")
 
     # Clear the DataFrame from memory
     del all_run_data
     del dataframes  # Clear the list of DataFrames
     gc.collect()  # Explicit garbage collection to reclaim memory
     print("Memory cleared.")
+
+    return num_seqs
 
 
 def run_fastBCR(input_folder, output_folder, r_script_path):
@@ -183,6 +185,8 @@ class Pipeline:
         # pprint(self.gcs_run_to_files)
         for run, file_list in self.gcs_run_to_files.items():
 
+            start_time = time.time()
+
             # make tmpdir
             run_name = run
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
@@ -203,13 +207,8 @@ class Pipeline:
                 gcs_copy(gcs_bucket, gcs_path, dst_name)
 
             # Concatenate all run files into one, saved as tmp_dir/fastBCR_input/{run_name}_ALL.csv
-            start_time = time.time()
-            concat_data_from_directory(tmp_dir, run, concat_output_directory)
-            end_time = time.time()
 
-            print(
-                f"Concatenating files to generate fastBCR input took {end_time - start_time} time"
-            )
+            num_seqs = concat_data_from_directory(tmp_dir, run, concat_output_directory)
 
             # run fastbr
 
@@ -220,9 +219,19 @@ class Pipeline:
                 r_script_path="fastBCR_pipeline.R",
             )
 
-            gcs_dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
+            # Move generated summary file to tmp_dir
+            # Path to the generated single_cluster_summary.csv
+            summary_file_path = os.path.join(
+                fastBCR_output_directory, "single_cluster_summary.csv"
+            )
+            if os.path.exists(summary_file_path):
+                # Move the file from the output folder to tmp_dir
+                moved_summary_file = os.path.join(tmp_dir, "single_cluster_summary.csv")
+                shutil.move(summary_file_path, moved_summary_file)
+                summary_file_path = moved_summary_file
+                print(f"Moved single_cluster_summary.csv to {summary_file_path}")
 
-            upload_start_time = time.time()
+            gcs_dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
 
             # Iterate over the files in the output directory
             for file_name in os.listdir(fastBCR_output_directory):
@@ -238,13 +247,52 @@ class Pipeline:
                         ),  # Destination path in GCS
                     )
 
-            upload_end_time = time.time()
+            end_time = time.time()
 
-            print(f"Upload time took {upload_end_time - upload_start_time} s")
+            # Read the summary CSV file into a pandas DataFrame
+            summary_df = pd.read_csv(summary_file_path)
+            summary_data = summary_df.iloc[0]
+
+            data_dic = {
+                "run": run_name,
+                "num_seqs": num_seqs,
+                "time": start_time - end_time,
+                "number_of_clusters": summary_data["number.of.clusters"],
+                "average_size_of_clusters": summary_data["average.size.of.clusters"],
+                "number_of_clustered_seqs": summary_data["number.of.clustered.seqs"],
+                "number_of_all_seqs": summary_data["number.of.all.seqs"],
+                "proportion_of_clustered_sequences": summary_data["proportion.of.clustered.sequences"]
+            }
+
+            # Write statistics to GCS
+            statistics_file_path = os.path.join(tmp_dir, f"{run_name}_run_statistics.csv")
+
+            # Write data_dic to CSV file
+            # Open the file in append mode to add data without overwriting existing entries
+            with open(statistics_file_path, mode='w', newline='') as file:
+                # Define the fieldnames based on the keys of the dictionary
+                fieldnames = data_dic.keys()
+                
+                # Create a DictWriter object
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                
+                # If the file is empty (i.e., it doesn't exist or is new), write the header
+                writer.writeheader()
+                
+                # Write the dictionary to the CSV file
+                writer.writerow(data_dic)
+
+            print(f"Data written to {statistics_file_path}")
+
+            stats_gcs_dir = f"proevo-ab/lineages/fastbcr/output/run_stats"
+            stats_basename = f"{run_name}_run_statistics.csv"
+            gcs_upload(src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
+                bucket_name=gcs_bucket,     # Destination GCS bucket
+                dst_name=os.path.join(stats_gcs_dir, stats_basename)  # Destination path in GCS
+            )
 
         # clean up
         shutil.rmtree(f"{tmp_dir}")
-
 
 if __name__ == "__main__":
 

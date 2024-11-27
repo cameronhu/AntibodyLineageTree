@@ -17,8 +17,6 @@ args <- parser$parse_args()
 input_folder <- args$input_folder
 output_folder <- args$output_folder
 
-start_time = Sys.time()
-
 oas_raw_data_list = data.load(folder_path = input_folder, storage_format = "csv")
 # example/OAS only contains one file for a single individual
 
@@ -35,7 +33,8 @@ oas_cluster = oas_clusters_list[[1]]
 clonal.tree.generation(bcr_clusters = oas_cluster, raw_data = oas_raw_data_list[[1]], output_dir = output_folder)
 # Function to generate clonal tree input for only one of the clonal families in this individual
 
-end_time = Sys.time()
-
-print(paste("fastBCR pipeline took:", difftime(end_time, start_time, units = "secs")))
+# Sort clustered and unclustered clonotype sequences, get summary
+seqs_list = Clustered.seqs(pro_data_list = oas_proc_data_list, clusters_list = oas_clusters_list)
+clusters_summary = Clusters.summary(pro_data_list = oas_proc_data_list, clusters_list = oas_clusters_list)
+single_cluster_summary = clusters_summary[[1]]
 
