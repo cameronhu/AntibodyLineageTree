@@ -5,4 +5,4 @@ gsutil ls -d gs://proevo-ab/lineages/fastbcr/output/runs/*/ > clonalTree_input_d
 gsutil cp clonalTree_input_directories.txt gs://proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt
 
 # Step 3: (Optional) Remove the local file if no longer needed
-rm clonalTree_input_directories.txt
+# rm clonalTree_input_directories.txt

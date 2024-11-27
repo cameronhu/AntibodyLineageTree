@@ -1,15 +1,14 @@
-gcloud beta batch jobs submit job-fastbcr-test3 --location us-central1 --config - <<EOD
+gcloud beta batch jobs submit job-fastbcr-n200 --location us-central1 --config - <<EOD
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-test3",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-n200",
   "taskGroups": [
     {
-      "taskCount": "10",
+      "taskCount": "200",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {
           "cpuMilli": "2000",
-          "memoryMib": "8192"
-          //"memoryMib": "15872"
+          "memoryMib": "8192",
         },
         "runnables": [
           {

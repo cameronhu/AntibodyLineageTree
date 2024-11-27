@@ -136,6 +136,8 @@ class Pipeline:
 
         for input in self.input_list:
 
+            start_time = time.time()
+
             # parse inputs
             input = input.replace("gs://", "")
             gcs_bucket, gcs_path = input.split("/", 1)
@@ -175,8 +177,6 @@ class Pipeline:
 
                 run_clonalTree(fasta_path, output_file_path)
 
-            upload_start_time = time.time()
-
             gcs_dst_dir = f"lineages/clonalTree/output/runs/{run_name}"
 
             # Iterate over the files in the output directory
@@ -193,9 +193,7 @@ class Pipeline:
                         ),  # Destination path in GCS
                     )
 
-            upload_end_time = time.time()
-
-            print(f"Upload time took {upload_end_time - upload_start_time} s")
+            end_time = time.time()
 
         # clean up
         shutil.rmtree(f"{tmp_dir}")
