@@ -284,7 +284,7 @@ class Pipeline:
 
             print(f"Data written to {statistics_file_path}")
 
-            stats_gcs_dir = f"proevo-ab/lineages/fastbcr/output/run_stats"
+            stats_gcs_dir = f"lineages/fastbcr/output/run_stats"
             stats_basename = f"{run_name}_run_statistics.csv"
             gcs_upload(src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
                 bucket_name=gcs_bucket,     # Destination GCS bucket
