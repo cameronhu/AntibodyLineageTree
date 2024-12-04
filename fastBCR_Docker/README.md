@@ -13,7 +13,7 @@ docker build -t fastbcr:prod .
 
 Test container without mounting of volume (production). Uses the input run_to_files list from GCP:
 ```
-docker run --rm --batch_task_index=0 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
+docker run --rm fastbcr:prod_timing --batch_task_index=1 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv' 
 ```
 
 Test the container with mounting of volume:
@@ -34,7 +34,7 @@ docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
 
 ## Dec 3rd v1.1.3 New Updates Container
 ```
-docker build -f Dockerfile . -t fastbcr:prod_timing
+docker build --no-cache -f Dockerfile . -t fastbcr:prod_timing
 docker tag fastbcr:prod_timing us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod_timing
 docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod_timing
 ```

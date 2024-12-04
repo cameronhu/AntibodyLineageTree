@@ -37,4 +37,4 @@ clonal.tree.generation(bcr_clusters = oas_cluster, raw_data = oas_raw_data_list[
 seqs_list = Clustered.seqs(pro_data_list = oas_proc_data_list, clusters_list = oas_clusters_list)
 clusters_summary = Clusters.summary(pro_data_list = oas_proc_data_list, clusters_list = oas_clusters_list)
 single_cluster_summary = clusters_summary[[1]]
-
+write.table(single_cluster_summary, file = file.path(output_folder, "single_cluster_summary.csv"), sep = ",", row.names = FALSE)

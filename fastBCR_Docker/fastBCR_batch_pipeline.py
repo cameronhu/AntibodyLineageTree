@@ -253,9 +253,7 @@ class Pipeline:
                         )
 
                 # Upload all clonotype-related CSV files to GCS
-                clonotype_gcs_dir = (
-                    f"proevo-ab/lineages/fastbcr/output/run_clonotypes/{run_name}"
-                )
+                clonotype_gcs_dir = f"lineages/fastbcr/output/run_clonotypes/{run_name}"
                 for file_name in os.listdir(clonotype_temp_dir):
                     file_path = os.path.join(clonotype_temp_dir, file_name)
                     gcs_upload(
@@ -283,58 +281,62 @@ class Pipeline:
 
                 end_time = time.time()
 
+                # If summary statistics exist
                 # Read the summary CSV file into a pandas DataFrame
-                summary_df = pd.read_csv(summary_file_path)
-                summary_data = summary_df.iloc[0]
+                # Write to a CSV
+                # Upload to GCS
+                if os.path.exists(summary_file_path):
+                    summary_df = pd.read_csv(summary_file_path)
+                    summary_data = summary_df.iloc[0]
 
-                data_dic = {
-                    "run": run_name,
-                    "num_seqs": num_seqs,
-                    "time": start_time - end_time,
-                    "number_of_clusters": summary_data["number.of.clusters"],
-                    "average_size_of_clusters": summary_data[
-                        "average.size.of.clusters"
-                    ],
-                    "number_of_clustered_seqs": summary_data[
-                        "number.of.clustered.seqs"
-                    ],
-                    "number_of_all_seqs": summary_data["number.of.all.seqs"],
-                    "proportion_of_clustered_sequences": summary_data[
-                        "proportion.of.clustered.sequences"
-                    ],
-                }
+                    data_dic = {
+                        "run": run_name,
+                        "num_seqs": num_seqs,
+                        "time": start_time - end_time,
+                        "number_of_clusters": summary_data["number.of.clusters"],
+                        "average_size_of_clusters": summary_data[
+                            "average.size.of.clusters"
+                        ],
+                        "number_of_clustered_seqs": summary_data[
+                            "number.of.clustered.seqs"
+                        ],
+                        "number_of_all_seqs": summary_data["number.of.all.seqs"],
+                        "proportion_of_clustered_sequences": summary_data[
+                            "proportion.of.clustered.sequences"
+                        ],
+                    }
 
-                # Write statistics to GCS
-                statistics_file_path = os.path.join(
-                    tmp_dir, f"{run_name}_run_statistics.csv"
-                )
+                    # Write statistics to GCS
+                    statistics_file_path = os.path.join(
+                        tmp_dir, f"{run_name}_run_statistics.csv"
+                    )
 
-                # Write data_dic to CSV file
-                # Open the file in append mode to add data without overwriting existing entries
-                with open(statistics_file_path, mode="w", newline="") as file:
-                    # Define the fieldnames based on the keys of the dictionary
-                    fieldnames = data_dic.keys()
+                    # Write data_dic to CSV file
+                    # Open the file in append mode to add data without overwriting existing entries
+                    with open(statistics_file_path, mode="w", newline="") as file:
+                        # Define the fieldnames based on the keys of the dictionary
+                        fieldnames = data_dic.keys()
 
-                    # Create a DictWriter object
-                    writer = csv.DictWriter(file, fieldnames=fieldnames)
+                        # Create a DictWriter object
+                        writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-                    # If the file is empty (i.e., it doesn't exist or is new), write the header
-                    writer.writeheader()
+                        # If the file is empty (i.e., it doesn't exist or is new), write the header
+                        writer.writeheader()
 
-                    # Write the dictionary to the CSV file
-                    writer.writerow(data_dic)
+                        # Write the dictionary to the CSV file
+                        writer.writerow(data_dic)
 
-                print(f"Data written to {statistics_file_path}")
+                    print(f"Data written to {statistics_file_path}")
 
-                stats_gcs_dir = f"lineages/fastbcr/output/run_stats"
-                stats_basename = f"{run_name}_run_statistics.csv"
-                gcs_upload(
-                    src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
-                    bucket_name=gcs_bucket,  # Destination GCS bucket
-                    dst_name=os.path.join(
-                        stats_gcs_dir, stats_basename
-                    ),  # Destination path in GCS
-                )
+                    stats_gcs_dir = f"lineages/fastbcr/output/run_stats"
+                    stats_basename = f"{run_name}_run_statistics.csv"
+                    gcs_upload(
+                        src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
+                        bucket_name=gcs_bucket,  # Destination GCS bucket
+                        dst_name=os.path.join(
+                            stats_gcs_dir, stats_basename
+                        ),  # Destination path in GCS
+                    )
             except RuntimeError as e:
                 print(
                     f"Pipeline terminated due to lack of sequences to cluster in Rscript: {e}"
