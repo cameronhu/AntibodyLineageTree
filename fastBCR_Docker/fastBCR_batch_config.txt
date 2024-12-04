@@ -1,9 +1,9 @@
-gcloud beta batch jobs submit job-fastbcr-n200 --location us-central1 --config - <<EOD
+gcloud beta batch jobs submit job-fastbcr-time-test --location us-central1 --config - <<EOD
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-n200",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-time-test",
   "taskGroups": [
     {
-      "taskCount": "200",
+      "taskCount": "1",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {
@@ -13,7 +13,7 @@ gcloud beta batch jobs submit job-fastbcr-n200 --location us-central1 --config -
         "runnables": [
           {
             "container": {
-              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod",
+              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod_timing",
               "entrypoint": "",
               "commands": [
                 "--batch_input=proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv",

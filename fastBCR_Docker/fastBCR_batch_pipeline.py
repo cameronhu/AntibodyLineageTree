@@ -12,6 +12,7 @@ import subprocess as sp
 import pandas as pd
 import gc
 import csv
+import uuid
 
 from pprint import pprint
 from google.cloud import storage
@@ -71,6 +72,10 @@ def concat_data_from_directory(directory_path, run, output_dir):
         dataframes.append(single_file_data)
 
     all_run_data = pd.concat(dataframes, ignore_index=True)
+    num_seqs = len(all_run_data)
+
+    # Generate unique sequence_ids
+    all_run_data["sequence_id"] = [str(uuid.uuid4()) for _ in range(num_seqs)]
 
     # Define output file name and path
     output_file_name = f"{run}_ALL.csv"
@@ -78,7 +83,6 @@ def concat_data_from_directory(directory_path, run, output_dir):
 
     # Write the final DataFrame to a CSV file
     all_run_data.to_csv(output_file_path, index=False)
-    num_seqs = len{all_run_data}
     print(f"Data concatenated and written to {output_file_path}")
     print(f"# of sequences is {num_seqs}")
 
@@ -192,9 +196,11 @@ class Pipeline:
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
             concat_output_directory = os.path.join(tmp_dir, "fastBCR_input")
             fastBCR_output_directory = os.path.join(tmp_dir, "fastBCR_output")
+            clonotype_temp_dir = os.path.join(tmp_dir, "fastBCR_clonotypes")
             os.makedirs(tmp_dir, exist_ok=True)
             os.makedirs(concat_output_directory, exist_ok=True)
             os.makedirs(fastBCR_output_directory, exist_ok=True)
+            os.makedirs(clonotype_temp_dir, exist_ok=True)
 
             # Download raw OAS input files into temp
             for input in file_list:
@@ -231,6 +237,25 @@ class Pipeline:
                 summary_file_path = moved_summary_file
                 print(f"Moved single_cluster_summary.csv to {summary_file_path}")
 
+            # Move all additional CSV files to the temporary clonotype directory
+            for file_name in os.listdir(fastBCR_output_directory):
+                file_path = os.path.join(fastBCR_output_directory, file_name)
+                if file_name.endswith(".csv") and os.path.isfile(file_path):
+                    shutil.move(file_path, os.path.join(clonotype_temp_dir, file_name))
+
+            # Upload all clonotype-related CSV files to GCS
+            clonotype_gcs_dir = (
+                f"proevo-ab/lineages/fastbcr/output/run_clonotypes/{run_name}"
+            )
+            for file_name in os.listdir(clonotype_temp_dir):
+                file_path = os.path.join(clonotype_temp_dir, file_name)
+                gcs_upload(
+                    src_name=file_path,
+                    bucket_name=gcs_bucket,
+                    dst_name=os.path.join(clonotype_gcs_dir, file_name),
+                )
+            print(f"Uploaded clonotype CSVs to {clonotype_gcs_dir}")
+
             gcs_dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
 
             # Iterate over the files in the output directory
@@ -261,24 +286,28 @@ class Pipeline:
                 "average_size_of_clusters": summary_data["average.size.of.clusters"],
                 "number_of_clustered_seqs": summary_data["number.of.clustered.seqs"],
                 "number_of_all_seqs": summary_data["number.of.all.seqs"],
-                "proportion_of_clustered_sequences": summary_data["proportion.of.clustered.sequences"]
+                "proportion_of_clustered_sequences": summary_data[
+                    "proportion.of.clustered.sequences"
+                ],
             }
 
             # Write statistics to GCS
-            statistics_file_path = os.path.join(tmp_dir, f"{run_name}_run_statistics.csv")
+            statistics_file_path = os.path.join(
+                tmp_dir, f"{run_name}_run_statistics.csv"
+            )
 
             # Write data_dic to CSV file
             # Open the file in append mode to add data without overwriting existing entries
-            with open(statistics_file_path, mode='w', newline='') as file:
+            with open(statistics_file_path, mode="w", newline="") as file:
                 # Define the fieldnames based on the keys of the dictionary
                 fieldnames = data_dic.keys()
-                
+
                 # Create a DictWriter object
                 writer = csv.DictWriter(file, fieldnames=fieldnames)
-                
+
                 # If the file is empty (i.e., it doesn't exist or is new), write the header
                 writer.writeheader()
-                
+
                 # Write the dictionary to the CSV file
                 writer.writerow(data_dic)
 
@@ -286,13 +315,17 @@ class Pipeline:
 
             stats_gcs_dir = f"lineages/fastbcr/output/run_stats"
             stats_basename = f"{run_name}_run_statistics.csv"
-            gcs_upload(src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
-                bucket_name=gcs_bucket,     # Destination GCS bucket
-                dst_name=os.path.join(stats_gcs_dir, stats_basename)  # Destination path in GCS
+            gcs_upload(
+                src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
+                bucket_name=gcs_bucket,  # Destination GCS bucket
+                dst_name=os.path.join(
+                    stats_gcs_dir, stats_basename
+                ),  # Destination path in GCS
             )
 
         # clean up
         shutil.rmtree(f"{tmp_dir}")
+
 
 if __name__ == "__main__":
 

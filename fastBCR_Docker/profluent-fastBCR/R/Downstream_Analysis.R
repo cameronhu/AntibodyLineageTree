@@ -924,27 +924,40 @@ seqlogo.plot <- function(bcr_clusters, index, type = c("AA", "DNA"), raw_data = 
 #' fastBCR will retrieve all the DNA sequences, which can be multiple sequences due to the degeneracy of codons, that correspond to the amino acid sequence of each clonotype from the raw data
 #' @param output_dir (str) The directory to which the FASTA files should be written to
 #'
-#' @return Clonal Family in FASTA format, in ready-to-use format for input to ClonalTree 
+#' @return Clonal Family in FASTA format, in ready-to-use format for input to ClonalTree
 #'
 #' @export
-clonal.tree.generation <- function(bcr_clusters, raw_data, output_dir) {
-  pb <- utils::txtProgressBar(min = 0, max = length(bcr_clusters), style = 3)
+clonal.tree.generation <- function(bcr_clusters, index, raw_data, output_dir) {
+  # Filter productive data
+  productive_data <- data.productive(raw_data)
   for (index in seq_along(bcr_clusters)) {
-    print(index)
-    ids <- bcr_clusters[[index]]$clonotype_index
-    l <- nchar(ids)
-    if (min(l) > 5) {
-      ids <- stringr::str_sub(ids, l - 4, l)
-    }
-
-    index_match <- bcr_clusters[[index]]$index_match
-    names(index_match) <- NULL
-    raw_index <- unlist(index_match)
-    productive_data <- data.productive(raw_data)
-    seqs <- unique(productive_data$junction[raw_index])
-    MSAalign_dna <- msa::msa(Biostrings::DNAStringSet(seqs), "ClustalW")
-    seqs_dna <- as.character(attributes(MSAalign_dna)$unmasked)
-    splt <- strsplit(seqs_dna, "")
+    index_match_list <- bcr_clusters[[index]]$index_match
+    
+    # Flatten index_match_list to get all relevant indices for this clonal family
+    relevant_indices <- unlist(index_match_list)
+    family_productive_data <- productive_data[relevant_indices, ]
+    
+    # Extract clonotype information
+    clonotype_info <- bcr_clusters[[index]][, c(
+      "clonotype_index", "clonotype_count", "clone_count", "clone_fre", "orign_index", "index_match"
+    )]
+    
+    # Extract clonotype sequences
+    clonotype_ids <- bcr_clusters[[index]]$clonotype_index
+    clonotype_seqs <- bcr_clusters[[index]]$junction  # Clonotype junctions
+    
+    # Create a dataframe for the FASTA file
+    clonal_tree_df <- data.frame(
+      sequence_id = clonotype_ids,
+      junction = clonotype_seqs,
+      clone_count = bcr_clusters[[index]]$clone_count  # Clonotype abundancy
+    )
+    
+    # Perform MSA on filtered productive_data junction sequences
+    productive_junctions <- unique(family_productive_data$junction)
+    MSAalign_dna <- msa::msa(Biostrings::DNAStringSet(productive_junctions), "ClustalW")
+    align_junction_seqs <- as.character(attributes(MSAalign_dna)$unmasked)
+    splt <- strsplit(align_junction_seqs, "")
     DNA_len <- length(splt[[1]])
     most_DNA <- c()
     for (j in 1:DNA_len) {
@@ -956,25 +969,96 @@ clonal.tree.generation <- function(bcr_clusters, raw_data, output_dir) {
       most_DNA <- c(most_DNA, tmp.DNA)
     }
     consensus_DNA <- paste(most_DNA, collapse = "")
-    con.loc <- which(seqs %in% consensus_DNA)
-
-    if (length(con.loc) == 0) {
-      ids <- c("naive", ids)
-      seqs <- c(consensus_DNA, seqs)
-    } else {
-      ids[con.loc] <- "naive"
-    }
+    
+    # Add the naive sequence to clonal_tree_df
+    naive_df <- data.frame(
+      sequence_id = "naive",
+      junction = consensus_DNA,
+      clone_count = 1
+    )
+    clonal_tree_df <- rbind(naive_df, clonal_tree_df)
+    
+    # Write FASTA file
     file_name <- paste0("ClonalFamily_", index)
-    fasta <- paste0(">", ids, "\n", seqs)
-    write.table(fasta,
+    fasta <- paste0(
+      ">", clonal_tree_df$sequence_id, "@", clonal_tree_df$clone_count, "\n",
+      clonal_tree_df$junction
+    )
+    write.table(
+      fasta,
       file = paste0(output_dir, "/", file_name, ".fasta"),
       row.names = F,
       col.names = F,
       quote = F
     )
+    
+    # Write Clonotype CSV file
+    csv_file_name <- paste0("Clonotypes_ClonalFamily_", index, ".csv")
+    write.csv(
+      clonotype_info,
+      file = paste0(output_dir, "/", csv_file_name),
+      row.names = FALSE
+    )
   }
-  setTxtProgressBar(pb, index)
 }
+# clonal.tree.generation <- function(bcr_clusters, raw_data, output_dir) {
+#   pb <- utils::txtProgressBar(min = 0, max = length(bcr_clusters), style = 3)
+#   productive_data <- data.productive(raw_data)
+#   for (index in seq_along(bcr_clusters)) {
+#     index_match_list <- bcr_clusters[[index]]$index_match
+#     clone_count <- bcr_clusters[[index]]$clone_count
+#     all_ids <- c()
+#     all_junctions <- c()
+#     all_counts <- c()
+#     for (i in seq_along(index_match_list)) {
+#       index_match <- index_match_list[[i]]
+#       all_ids <- c(all_ids, productive_data[index_match,]$sequence_id)
+#       all_junctions <- c(all_junctions, productive_data[index_match,]$junction)
+#       all_counts <- c(all_counts, clone_count[i])
+#     }
+#     clonal_tree_df <- data.frame(sequence_id = all_ids,
+#                                  junction = all_junctions,
+#                                  clone_count = all_counts)
+#     all_junctions <- factor(all_junctions, levels = unique(all_junctions))
+#     clonal_tree_df <- clonal_tree_df[!duplicated(all_junctions), ]
+#     
+#     junction_seqs <- unique(clonal_tree_df$junction)
+#     MSAalign_dna <- msa::msa(Biostrings::DNAStringSet(junction_seqs), "ClustalW")
+#     align_junction_seqs <- as.character(attributes(MSAalign_dna)$unmasked)
+#     splt <- strsplit(align_junction_seqs, "")
+#     DNA_len <- length(splt[[1]])
+#     most_DNA <- c()
+#     for (j in 1:DNA_len) {
+#       DNA_lis <- sapply(splt, function(x) x[j])
+#       tmp.DNA <- names(sort(table(DNA_lis), decreasing = TRUE))[1]
+#       if (tmp.DNA == "-") {
+#         tmp.DNA <- names(sort(table(DNA_lis), decreasing = TRUE))[2]
+#       }
+#       most_DNA <- c(most_DNA, tmp.DNA)
+#     }
+#     consensus_DNA <- paste(most_DNA, collapse = "")
+#     con.loc <- which(align_junction_seqs %in% consensus_DNA)
+#     naive_df <- data.frame(sequence_id = "naive",
+#                            junction = consensus_DNA,
+#                            clone_count = 1)  # Default abundancy for naive
+#     if (length(con.loc) != 0) {
+#       clonal_tree_df <- clonal_tree_df[-con.loc, ]
+#     }
+#     clonal_tree_df <- rbind(naive_df, clonal_tree_df)
+#     
+#     # Prepare output in the desired format
+#     file_name <- paste0("ClonalFamily_", index)
+#     fasta <- paste0(">", clonal_tree_df$sequence_id, "@", clonal_tree_df$clone_count, "\n", clonal_tree_df$junction)
+#     write.table(fasta,
+#                 file = paste0(output_dir, "/", file_name, ".fasta"),
+#                 row.names = F,
+#                 col.names = F,
+#                 quote = F
+#     )
+#   }
+#   setTxtProgressBar(pb, index)
+# }
+
 
 #' Plot: B cell lineage tree reconstructed by ClonalTree
 #'
