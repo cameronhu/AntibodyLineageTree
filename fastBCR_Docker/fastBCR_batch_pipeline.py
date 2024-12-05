@@ -161,6 +161,9 @@ class Pipeline:
         lines = lines[1:]  # Exclude header
         batch_lines = lines[input_start:input_stop]
 
+        client = storage.Client(project="profluent-evo")
+        gcs_dir = "lineages/fastbcr/output/runs/"
+
         # Populate the run_to_files dictionary
         for line in batch_lines:
             if line.strip():  # Skip empty lines
@@ -168,6 +171,21 @@ class Pipeline:
                 run_to_files[run_id] = eval(
                     files_str
                 )  # Convert stringified list to a Python list
+
+                # Check if the run_id exists as a folder in the specified GCS directory
+                run_folder_path = f"{gcs_dir}{run_id}/"
+                blobs = list(
+                    client.list_blobs(
+                        bucket_or_name="proevo-ab",
+                        prefix=run_folder_path,
+                        delimiter="/",
+                    )
+                )
+
+                if blobs:
+                    # If run_id folder exists in GCS, terminate the program
+                    print("FastBCR already performed")
+                    sys.exit(0)  # Exit the program successfully
 
         self.gcs_run_to_files = run_to_files
 
@@ -264,6 +282,25 @@ class Pipeline:
                 print(f"Uploaded clonotype CSVs to {clonotype_gcs_dir}")
 
                 gcs_dst_dir = f"lineages/fastbcr/output/runs/{run_name}"
+
+                # If there aren't any fastBCR outputs
+                if len(os.listdir(fastBCR_output_directory)) == 0:
+                    # Create a dummy file to ensure the directory exists
+                    dummy_file_path = os.path.join(
+                        fastBCR_output_directory, "no_fastBCR.txt"
+                    )
+                    with open(dummy_file_path, "w") as f:
+                        f.write("")  # Create an empty file
+
+                    # Upload the dummy file to create the folder in GCS
+                    gcs_upload(
+                        src_name=dummy_file_path,  # Path to the dummy file
+                        bucket_name=gcs_bucket,  # Destination GCS bucket
+                        dst_name=os.path.join(
+                            gcs_dst_dir, "no_fastBCR.txt"
+                        ),  # Destination path in GCS
+                    )
+                    os.remove(dummy_file_path)
 
                 # Iterate over the files in the output directory
                 for file_name in os.listdir(fastBCR_output_directory):
