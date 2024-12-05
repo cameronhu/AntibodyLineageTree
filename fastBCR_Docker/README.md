@@ -31,7 +31,6 @@ docker build -f Dockerfile . -t fastbcr:prod
 docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
 docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
 ```
-
 ## Dec 3rd v1.1.3 New Updates Container
 ```
 docker build --no-cache -f Dockerfile . -t fastbcr:prod_timing
@@ -67,3 +66,11 @@ tail -f timings_log.txt
 - Completed SRR8365422 at 124 GB, but was close to 100 GB of total memory. SRR8365422 has 4_545_677 unique  sequences, and 6_177_127 total sequences. ~950 seconds to complete this processing.
 - SRR8365433 crashed memory, has 25,705,003 total sequences, ~5 million unique sequences
 - Updated to 250 GB memory, was able to run SRR8283795 with 7.6 million unique sequences
+
+### Batch Processing Notes
+
+```
+gsutil ls -d gs://proevo-ab/lineages/fastbcr/output/runs/** | wc -l
+```
+
+Counts the number of subdirectories within the `proevo-ab/lineages/fastbcr/output/runs/` directory on GCS. Each completed run should have a directory for it, even if there were no generated clonal families from fastBCR.
