@@ -1,9 +1,9 @@
-gcloud beta batch jobs submit job-fastbcr-new-20 --location us-central1 --config - <<EOD
+gcloud beta batch jobs submit job-fastbcr-full-1 --location us-central1 --config - <<EOD
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-new-20",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-full-1",
   "taskGroups": [
     {
-      "taskCount": "20",
+      "taskCount": "3660",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {
