@@ -10,6 +10,10 @@ Build the container:
 ```
 docker build -t fastbcr:prod .
 ```
+Test container with bind mount of new fastBCR_batch_pipeline.py
+```
+docker run --rm -v /home/cameronhu/lineage_tree/fastBCR_Docker/fastBCR_batch_pipeline.py:/root/fastBCR_batch_pipeline.py fastbcr:prod_timing --batch_task_index=1 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
+```
 
 Test container without mounting of volume (production). Uses the input run_to_files list from GCP:
 ```
@@ -70,7 +74,7 @@ tail -f timings_log.txt
 ### Batch Processing Notes
 
 ```
-gsutil ls -d gs://proevo-ab/lineages/fastbcr/output/runs/** | wc -l
+gsutil ls -d gs://proevo-ab/lineages/fastbcr/output/runs/*/ | wc -l
 ```
 
 Counts the number of subdirectories within the `proevo-ab/lineages/fastbcr/output/runs/` directory on GCS. Each completed run should have a directory for it, even if there were no generated clonal families from fastBCR.
