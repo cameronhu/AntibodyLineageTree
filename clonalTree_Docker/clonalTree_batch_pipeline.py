@@ -77,6 +77,8 @@ def run_clonalTree(input_fasta, output_path):
                 input_fasta,
                 "-o",
                 output_path,
+                "-a",
+                1,
             ],
             check=True,
             text=True,

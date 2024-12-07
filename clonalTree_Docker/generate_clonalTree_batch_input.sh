@@ -1,8 +1,8 @@
-# Step 1: List directories and save to a local file
-gsutil ls -d gs://proevo-ab/lineages/fastbcr/output/runs/*/ > clonalTree_input_directories.txt
+# Generates the batch_input for ClonalTree
+# Batch input is a list of FASTA files
+
+gsutil ls -r "gs://proevo-ab/lineages/fastbcr/output/runs/**/*.fasta" > clonalTree_batch_input.txt
 
 # Step 2: Upload the file to the desired GCS location
-gsutil cp clonalTree_input_directories.txt gs://proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt
+gsutil cp clonalTree_batch_input.txt gs://proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt
 
-# Step 3: (Optional) Remove the local file if no longer needed
-# rm clonalTree_input_directories.txt
