@@ -78,3 +78,11 @@ gsutil ls -d gs://proevo-ab/lineages/fastbcr/output/runs/*/ | wc -l
 ```
 
 Counts the number of subdirectories within the `proevo-ab/lineages/fastbcr/output/runs/` directory on GCS. Each completed run should have a directory for it, even if there were no generated clonal families from fastBCR.
+3463 runs out of 3660 completed with 32 GB memory. 197 additional runs needed for processing.
+
+#### FastBCR Batch input generation filtering
+`filter_fastBCR_batch_input.py` takes in the original `human_unpaired_heavy_run_to_files.tsv` batch_input file, and checks on GCS for any directories that have already been created corresponding to the run names in the input file. Creates a new filtered .tsv file on GCS within the `proevo-ab/lineages/fastbcr/batch` directory. This new filtered .tsv file should be used as future batch_input for next iterations of the fastBCR workflow with larger file sizes.
+
+Batch 4 run with 64 GB memory, 8vCPU.
+
+After Batch 4, 156 additional runs leftover in `human_unpaired_heavy_run_to_file_batch_5.tsv`. Batch 5 run with e2-highmem-16, 128 GB, 16vCPU.
