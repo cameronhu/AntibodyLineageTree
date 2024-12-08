@@ -1,6 +1,6 @@
-gcloud beta batch jobs submit job-fastbcr-full-4 --location us-central1 --config - <<EOD
+gcloud beta batch jobs submit job-fastbcr-full-5 --location us-central1 --config - <<EOD
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-full-4",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-full-5",
   "taskGroups": [
     {
       "taskCount": "156",
@@ -33,7 +33,7 @@ gcloud beta batch jobs submit job-fastbcr-full-4 --location us-central1 --config
       {
         "policy": {
           "provisioningModel": "SPOT",
-          "machineType": "e2-highmem-8"
+          "machineType": "e2-highmem-16"
         }
       }
     ]
