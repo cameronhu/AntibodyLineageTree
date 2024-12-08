@@ -30,3 +30,7 @@ Test production container
 ```
 docker run --rm clonaltree:prod_timing --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt
 ```
+
+# Batch Job Notes
+
+Total number of FASTA files as of 12/8 is 706458. First run batch job has 5000 tasks, with batch_size of 150 (150 fasta files per compute instance). No memory consideration implemented yet.
