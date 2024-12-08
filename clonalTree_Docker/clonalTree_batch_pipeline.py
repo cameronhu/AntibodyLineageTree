@@ -142,16 +142,12 @@ class Pipeline:
         # Each input is a path to a FASTA file input to ClonalTree
         for input in self.input_list:
 
-            print(input)
-
             start_time = time.time()
 
             # parse inputs
             input = input.replace("gs://", "")
             gcs_bucket, gcs_path = input.split("/", 1)
             run_name = input.split("/")[-2]
-            print(gcs_bucket, gcs_path)
-            print(run_name)
 
             # make tmp_dir
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
@@ -169,18 +165,11 @@ class Pipeline:
             )
             gcs_copy(gcs_bucket, gcs_path, dst_name)
 
-            print(os.listdir(clonalTree_input_dir))
-
             # run ClonalTree, saving output to clonalTree_output_dir
 
             for file_name in os.listdir(clonalTree_input_dir):
                 # Generate input path
                 fasta_path = os.path.join(clonalTree_input_dir, file_name)
-                print(fasta_path)
-
-                # with open(fasta_path) as f:
-                #     for line in f:
-                #         print(line)
 
                 # Generate output path
                 # Parse the family name from the input_fasta path
