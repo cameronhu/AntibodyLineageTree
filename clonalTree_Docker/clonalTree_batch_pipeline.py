@@ -142,8 +142,6 @@ class Pipeline:
         # Each input is a path to a FASTA file input to ClonalTree
         for input in self.input_list:
 
-            start_time = time.time()
-
             # parse inputs
             input = input.replace("gs://", "")
             gcs_bucket, gcs_path = input.split("/", 1)
@@ -195,42 +193,6 @@ class Pipeline:
                             gcs_dst_dir, file_name
                         ),  # Destination path in GCS
                     )
-
-            end_time = time.time()
-
-            data_dic = {"run": run_name, "time": start_time - end_time}
-
-            # Write statistics to GCS
-            statistics_file_path = os.path.join(
-                tmp_dir, f"{run_name}_run_statistics.csv"
-            )
-
-            # Write data_dic to CSV file
-            # Open the file in append mode to add data without overwriting existing entries
-            with open(statistics_file_path, mode="w", newline="") as file:
-                # Define the fieldnames based on the keys of the dictionary
-                fieldnames = data_dic.keys()
-
-                # Create a DictWriter object
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-
-                # If the file is empty (i.e., it doesn't exist or is new), write the header
-                writer.writeheader()
-
-                # Write the dictionary to the CSV file
-                writer.writerow(data_dic)
-
-            print(f"Data written to {statistics_file_path}")
-
-            stats_gcs_dir = f"lineages/clonalTree/output/run_stats"
-            stats_basename = f"{run_name}_run_statistics.csv"
-            gcs_upload(
-                src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
-                bucket_name=gcs_bucket,  # Destination GCS bucket
-                dst_name=os.path.join(
-                    stats_gcs_dir, stats_basename
-                ),  # Destination path in GCS
-            )
 
         # clean up
         shutil.rmtree(f"{tmp_dir}")
