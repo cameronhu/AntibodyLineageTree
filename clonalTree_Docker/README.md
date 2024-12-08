@@ -11,3 +11,22 @@ To test with a GCS batch input file (production), replace the --batch_input with
 ```
 python clonalTree_batch_pipeline.py --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt
 ```
+
+## Testing of interactive Docker container
+Build test container: 
+```docker build -f Dockerfile_testing . -t clonaltree:latest```
+```docker run -it --rm clonaltree:latest```
+
+## Testing of Production Docker container
+
+Building of production Docker container, and push to artifact registry
+```
+docker build --no-cache . -t clonaltree:prod_timing
+docker tag clonaltree:prod_timing us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod_timing
+docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod_timing
+```
+
+Test production container
+```
+docker run --rm clonaltree:prod_timing --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt
+```

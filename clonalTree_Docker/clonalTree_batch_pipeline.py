@@ -78,7 +78,7 @@ def run_clonalTree(input_fasta, output_path):
                 "-o",
                 output_path,
                 "-a",
-                1,
+                "1",
             ],
             check=True,
             text=True,
@@ -115,12 +115,10 @@ class Pipeline:
             bucket, path = self.args["batch_input"].split("/", 1)
             # Return a list of FASTA filepaths
             input_list = gcs_read(bucket, path).split("\n")
-            print(input_list[0:10])
-            # print(type(input_file))
-            # input_list = [_.split("\t")[0] for _ in gcs_read(bucket, path).split("\n")]
 
         # Save the input_list as attribute
         self.input_list = input_list[input_start:input_stop]
+        # print(self.input_list)
 
     def parse_args(self):
 
@@ -141,9 +139,10 @@ class Pipeline:
 
     def main(self, threads=1):
 
-        # print(self.input_list)
-
+        # Each input is a path to a FASTA file input to ClonalTree
         for input in self.input_list:
+
+            print(input)
 
             start_time = time.time()
 
@@ -151,6 +150,7 @@ class Pipeline:
             input = input.replace("gs://", "")
             gcs_bucket, gcs_path = input.split("/", 1)
             run_name = input.split("/")[-2]
+            print(gcs_bucket, gcs_path)
             print(run_name)
 
             # make tmp_dir
@@ -161,85 +161,87 @@ class Pipeline:
             os.makedirs(clonalTree_input_dir, exist_ok=True)
             os.makedirs(clonalTree_output_dir, exist_ok=True)
 
-            # Create list of paths to ClonalTree input files
-            gcs_input_file_list = gcs_list_files(gcs_bucket, gcs_path)
-
             ###############################
 
-            # # Download ClonalTree input files into temp
-            # for gcs_input_path in gcs_input_file_list:
-            #     # copy input
-            #     dst_name = os.path.join(
-            #         clonalTree_input_dir, os.path.basename(gcs_input_path)
-            #     )
-            #     gcs_copy(gcs_bucket, gcs_input_path, dst_name)
+            # Download ClonalTree input files into temp
+            dst_name = os.path.join(
+                clonalTree_input_dir, f"{run_name}_{os.path.basename(input)}"
+            )
+            gcs_copy(gcs_bucket, gcs_path, dst_name)
 
-            # # run ClonalTree, saving output to clonalTree_output_dir
+            print(os.listdir(clonalTree_input_dir))
 
-            # for file_name in os.listdir(clonalTree_input_dir):
-            #     # Generate input path
-            #     fasta_path = os.path.join(clonalTree_input_dir, file_name)
+            # run ClonalTree, saving output to clonalTree_output_dir
 
-            #     # Generate output path
-            #     # Parse the family name from the input_fasta path
-            #     output_file_name = os.path.basename(fasta_path).replace(
-            #         ".fasta", ".abRT.nk"
-            #     )
-            #     output_file_path = os.path.join(clonalTree_output_dir, output_file_name)
+            for file_name in os.listdir(clonalTree_input_dir):
+                # Generate input path
+                fasta_path = os.path.join(clonalTree_input_dir, file_name)
+                print(fasta_path)
 
-            #     run_clonalTree(fasta_path, output_file_path)
+                # with open(fasta_path) as f:
+                #     for line in f:
+                #         print(line)
 
-            # gcs_dst_dir = f"lineages/clonalTree/output/runs/{run_name}"
+                # Generate output path
+                # Parse the family name from the input_fasta path
+                output_file_name = os.path.basename(fasta_path).replace(
+                    ".fasta", ".abRT.nk"
+                )
+                output_file_path = os.path.join(clonalTree_output_dir, output_file_name)
 
-            # # Iterate over the files in the output directory
-            # for file_name in os.listdir(clonalTree_output_dir):
-            #     file_path = os.path.join(clonalTree_output_dir, file_name)
+                run_clonalTree(fasta_path, output_file_path)
 
-            #     # Check if it's a file (ignore directories)
-            #     if os.path.isfile(file_path):
-            #         gcs_upload(
-            #             src_name=file_path,  # Path to file in fastBCR_output_directory
-            #             bucket_name=gcs_bucket,  # Destination GCS bucket
-            #             dst_name=os.path.join(
-            #                 gcs_dst_dir, file_name
-            #             ),  # Destination path in GCS
-            #         )
+            gcs_dst_dir = f"lineages/clonalTree/output/runs/{run_name}"
 
-            # end_time = time.time()
+            # Iterate over the files in the output directory
+            for file_name in os.listdir(clonalTree_output_dir):
+                file_path = os.path.join(clonalTree_output_dir, file_name)
 
-            # data_dic = {"run": run_name, "time": start_time - end_time}
+                # Check if it's a file (ignore directories)
+                if os.path.isfile(file_path):
+                    gcs_upload(
+                        src_name=file_path,  # Path to file in fastBCR_output_directory
+                        bucket_name=gcs_bucket,  # Destination GCS bucket
+                        dst_name=os.path.join(
+                            gcs_dst_dir, file_name
+                        ),  # Destination path in GCS
+                    )
 
-            # # Write statistics to GCS
-            # statistics_file_path = os.path.join(
-            #     tmp_dir, f"{run_name}_run_statistics.csv"
-            # )
+            end_time = time.time()
 
-            # # Write data_dic to CSV file
-            # # Open the file in append mode to add data without overwriting existing entries
-            # with open(statistics_file_path, mode="w", newline="") as file:
-            #     # Define the fieldnames based on the keys of the dictionary
-            #     fieldnames = data_dic.keys()
+            data_dic = {"run": run_name, "time": start_time - end_time}
 
-            #     # Create a DictWriter object
-            #     writer = csv.DictWriter(file, fieldnames=fieldnames)
+            # Write statistics to GCS
+            statistics_file_path = os.path.join(
+                tmp_dir, f"{run_name}_run_statistics.csv"
+            )
 
-            #     # If the file is empty (i.e., it doesn't exist or is new), write the header
-            #     writer.writeheader()
+            # Write data_dic to CSV file
+            # Open the file in append mode to add data without overwriting existing entries
+            with open(statistics_file_path, mode="w", newline="") as file:
+                # Define the fieldnames based on the keys of the dictionary
+                fieldnames = data_dic.keys()
 
-            #     # Write the dictionary to the CSV file
-            #     writer.writerow(data_dic)
+                # Create a DictWriter object
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-            # print(f"Data written to {statistics_file_path}")
+                # If the file is empty (i.e., it doesn't exist or is new), write the header
+                writer.writeheader()
 
-            # stats_gcs_dir = f"lineages/clonalTree/output/run_stats"
-            # stats_basename = f"{run_name}_run_statistics.csv"
-            # gcs_upload(
-            #     src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
-            #     bucket_name=gcs_bucket,  # Destination GCS bucket
-            #     dst_name=os.path.join(
-            #         stats_gcs_dir, stats_basename
-            #     ),  # Destination path in GCS
-            # )
+                # Write the dictionary to the CSV file
+                writer.writerow(data_dic)
+
+            print(f"Data written to {statistics_file_path}")
+
+            stats_gcs_dir = f"lineages/clonalTree/output/run_stats"
+            stats_basename = f"{run_name}_run_statistics.csv"
+            gcs_upload(
+                src_name=statistics_file_path,  # Path to file in fastBCR_output_directory
+                bucket_name=gcs_bucket,  # Destination GCS bucket
+                dst_name=os.path.join(
+                    stats_gcs_dir, stats_basename
+                ),  # Destination path in GCS
+            )
 
         # clean up
         shutil.rmtree(f"{tmp_dir}")
