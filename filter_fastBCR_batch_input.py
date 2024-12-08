@@ -47,5 +47,5 @@ if __name__ == "__main__":
 
     filter_batch_tsv(
         input_file="gs://proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv",
-        output_file="gs://proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_file_batch_3.tsv",
+        output_file="gs://proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_file_batch_5.tsv",
     )
