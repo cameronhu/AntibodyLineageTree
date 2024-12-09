@@ -85,12 +85,6 @@ docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
 ### clonalTree Batch job submission command
 Navigate to clonalTree_Docker/clonalTree_batch_config.txt. Use those commands to start a new batch job, modifying the job ID each time.
 
-## Generating ClonalTree Input Directory file
-
-ClonalTree inputs are all housed in the proevo-ab/lineages/fastbcr/outputs/runs directory. The list of those directories is the batch_input for the ClonalTree Docker container.
-The path to the ClonalTree batch_input file is: `gs://proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt`  To generate this input, run the shell script:
-`./generate_clonalTree_batch_input.sh`
-
 ## Running ClonalTree test inputs
 
 Within the clonaltree Docker container, within the ~/ClonalTree directory, run the following command:
