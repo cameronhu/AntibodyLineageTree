@@ -1,0 +1,992 @@
+Running with BATCH_TASK_INDEX=0
+Data concatenated and written to /tmp/tmphqtxrgg4/1279049/fastBCR_input/1279049_ALL.csv
+# of sequences is 10036
+Memory cleared.
+Concatenating files to generate fastBCR input took 2.1319804191589355 time
+Error running R script: Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: ggplot2
+Loading required package: ggmsa
+Registered S3 methods overwritten by 'ggalt':
+  method                  from   
+  grid.draw.absoluteGrob  ggplot2
+  grobHeight.absoluteGrob ggplot2
+  grobWidth.absoluteGrob  ggplot2
+  grobX.absoluteGrob      ggplot2
+  grobY.absoluteGrob      ggplot2
+ggmsa v1.12.0  Document: http://yulab-smu.top/ggmsa/
+
+If you use ggmsa in published research, please cite:
+L Zhou, T Feng, S Xu, F Gao, TT Lam, Q Wang, T Wu, H Huang, L Zhan, L Li, Y Guan, Z Dai*, G Yu* ggmsa: a visual exploration tool for multiple sequence alignment and associated data. Briefings in Bioinformatics. DOI:10.1093/bib/bbac222
+Loading required package: msa
+Loading required package: Biostrings
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+Loading required package: XVector
+Loading required package: GenomeInfoDb
+
+Attaching package: ‘Biostrings’
+
+The following object is masked from ‘package:base’:
+
+    strsplit
+
+Loading required package: statnet
+Loading required package: tergm
+Loading required package: ergm
+Loading required package: network
+
+‘network’ 1.18.2 (2023-12-04), part of the Statnet Project
+* ‘news(package="network")’ for changes since last version
+* ‘citation("network")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+‘ergm’ 4.7.5 (2024-11-06), part of the Statnet Project
+* ‘news(package="ergm")’ for changes since last version
+* ‘citation("ergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+‘ergm’ 4 is a major update that introduces some backwards-incompatible
+changes. Please type ‘news(package="ergm")’ for a list of major
+changes.
+
+Loading required package: networkDynamic
+
+‘networkDynamic’ 0.11.5 (2024-11-21), part of the Statnet Project
+* ‘news(package="networkDynamic")’ for changes since last version
+* ‘citation("networkDynamic")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Registered S3 method overwritten by 'tergm':
+  method                   from
+  simulate_formula.network ergm
+
+‘tergm’ 4.2.1 (2024-10-08), part of the Statnet Project
+* ‘news(package="tergm")’ for changes since last version
+* ‘citation("tergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+Attaching package: ‘tergm’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+Loading required package: ergm.count
+
+‘ergm.count’ 4.1.2 (2024-06-15), part of the Statnet Project
+* ‘news(package="ergm.count")’ for changes since last version
+* ‘citation("ergm.count")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Loading required package: sna
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+The following object is masked from ‘package:Biostrings’:
+
+    order
+
+The following object is masked from ‘package:XVector’:
+
+    order
+
+The following object is masked from ‘package:IRanges’:
+
+    order
+
+The following object is masked from ‘package:S4Vectors’:
+
+    order
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    order
+
+The following objects are masked from ‘package:base’:
+
+    attr, order
+
+sna: Tools for Social Network Analysis
+Version 2.8 created on 2024-09-07.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+ For citation information, type citation("sna").
+ Type help(package="sna") to get started.
+
+Loading required package: tsna
+
+‘statnet’ 2019.6 (2019-06-13), part of the Statnet Project
+* ‘news(package="statnet")’ for changes since last version
+* ‘citation("statnet")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Error in bcr_clusters[[i]] : subscript out of bounds
+Calls: data.BCR.clusters -> BCR.cluster
+Execution halted
+
+Upload time took 4.839897155761719e-05 s
+Running with BATCH_TASK_INDEX=1
+Data concatenated and written to /tmp/tmplec8je67/1279050/fastBCR_input/1279050_ALL.csv
+# of sequences is 16429
+Memory cleared.
+Concatenating files to generate fastBCR input took 3.1920571327209473 time
+R script output: 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have loaded 1 samples
+Sample '1279050_ALL' contains 16429 sequences
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have preprocessed 1 samples
+Sample '1279050_ALL' contains 14966 unique clonotypes
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have clustered 1 samples
+Sample '1279050_ALL' contains 8 clonal families
+  |                                                                            
+  |                                                                      |   0%[1] 1
+use default substitution matrix
+[1] 2
+use default substitution matrix
+[1] 3
+use default substitution matrix
+[1] 4
+use default substitution matrix
+[1] 5
+use default substitution matrix
+[1] 6
+use default substitution matrix
+[1] 7
+use default substitution matrix
+[1] 8
+use default substitution matrix
+
+  |                                                                            
+  |======================================================================| 100%[1] "fastBCR pipeline took: 6.73215889930725"
+
+Upload time took 1.044773817062378 s
+Running with BATCH_TASK_INDEX=2
+Data concatenated and written to /tmp/tmp_c21j15b/1279051/fastBCR_input/1279051_ALL.csv
+# of sequences is 12191
+Memory cleared.
+Concatenating files to generate fastBCR input took 2.265462636947632 time
+R script output: 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have loaded 1 samples
+Sample '1279051_ALL' contains 12191 sequences
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have preprocessed 1 samples
+Sample '1279051_ALL' contains 11376 unique clonotypes
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have clustered 1 samples
+Sample '1279051_ALL' contains 4 clonal families
+  |                                                                            
+  |                                                                      |   0%[1] 1
+use default substitution matrix
+[1] 2
+use default substitution matrix
+[1] 3
+use default substitution matrix
+[1] 4
+use default substitution matrix
+
+  |                                                                            
+  |======================================================================| 100%[1] "fastBCR pipeline took: 4.66455316543579"
+
+Upload time took 0.524688720703125 s
+Running with BATCH_TASK_INDEX=3
+Data concatenated and written to /tmp/tmp01vgoinv/1279052/fastBCR_input/1279052_ALL.csv
+# of sequences is 1123
+Memory cleared.
+Concatenating files to generate fastBCR input took 0.2949368953704834 time
+Error running R script: Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: ggplot2
+Loading required package: ggmsa
+Registered S3 methods overwritten by 'ggalt':
+  method                  from   
+  grid.draw.absoluteGrob  ggplot2
+  grobHeight.absoluteGrob ggplot2
+  grobWidth.absoluteGrob  ggplot2
+  grobX.absoluteGrob      ggplot2
+  grobY.absoluteGrob      ggplot2
+ggmsa v1.12.0  Document: http://yulab-smu.top/ggmsa/
+
+If you use ggmsa in published research, please cite:
+L Zhou, T Feng, S Xu, F Gao, TT Lam, Q Wang, T Wu, H Huang, L Zhan, L Li, Y Guan, Z Dai*, G Yu* ggmsa: a visual exploration tool for multiple sequence alignment and associated data. Briefings in Bioinformatics. DOI:10.1093/bib/bbac222
+Loading required package: msa
+Loading required package: Biostrings
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+Loading required package: XVector
+Loading required package: GenomeInfoDb
+
+Attaching package: ‘Biostrings’
+
+The following object is masked from ‘package:base’:
+
+    strsplit
+
+Loading required package: statnet
+Loading required package: tergm
+Loading required package: ergm
+Loading required package: network
+
+‘network’ 1.18.2 (2023-12-04), part of the Statnet Project
+* ‘news(package="network")’ for changes since last version
+* ‘citation("network")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+‘ergm’ 4.7.5 (2024-11-06), part of the Statnet Project
+* ‘news(package="ergm")’ for changes since last version
+* ‘citation("ergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+‘ergm’ 4 is a major update that introduces some backwards-incompatible
+changes. Please type ‘news(package="ergm")’ for a list of major
+changes.
+
+Loading required package: networkDynamic
+
+‘networkDynamic’ 0.11.5 (2024-11-21), part of the Statnet Project
+* ‘news(package="networkDynamic")’ for changes since last version
+* ‘citation("networkDynamic")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Registered S3 method overwritten by 'tergm':
+  method                   from
+  simulate_formula.network ergm
+
+‘tergm’ 4.2.1 (2024-10-08), part of the Statnet Project
+* ‘news(package="tergm")’ for changes since last version
+* ‘citation("tergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+Attaching package: ‘tergm’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+Loading required package: ergm.count
+
+‘ergm.count’ 4.1.2 (2024-06-15), part of the Statnet Project
+* ‘news(package="ergm.count")’ for changes since last version
+* ‘citation("ergm.count")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Loading required package: sna
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+The following object is masked from ‘package:Biostrings’:
+
+    order
+
+The following object is masked from ‘package:XVector’:
+
+    order
+
+The following object is masked from ‘package:IRanges’:
+
+    order
+
+The following object is masked from ‘package:S4Vectors’:
+
+    order
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    order
+
+The following objects are masked from ‘package:base’:
+
+    attr, order
+
+sna: Tools for Social Network Analysis
+Version 2.8 created on 2024-09-07.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+ For citation information, type citation("sna").
+ Type help(package="sna") to get started.
+
+Loading required package: tsna
+
+‘statnet’ 2019.6 (2019-06-13), part of the Statnet Project
+* ‘news(package="statnet")’ for changes since last version
+* ‘citation("statnet")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Error in bcr_clusters[[i]] : subscript out of bounds
+Calls: data.BCR.clusters -> BCR.cluster
+Execution halted
+
+Upload time took 6.318092346191406e-05 s
+Running with BATCH_TASK_INDEX=4
+Data concatenated and written to /tmp/tmptes4u2gt/1279053/fastBCR_input/1279053_ALL.csv
+# of sequences is 11289
+Memory cleared.
+Concatenating files to generate fastBCR input took 2.1961755752563477 time
+R script output: 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have loaded 1 samples
+Sample '1279053_ALL' contains 11289 sequences
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have preprocessed 1 samples
+Sample '1279053_ALL' contains 10805 unique clonotypes
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have clustered 1 samples
+Sample '1279053_ALL' contains 2 clonal families
+  |                                                                            
+  |                                                                      |   0%[1] 1
+use default substitution matrix
+[1] 2
+use default substitution matrix
+
+  |                                                                            
+  |======================================================================| 100%[1] "fastBCR pipeline took: 3.81007075309753"
+
+Upload time took 0.27748656272888184 s
+Running with BATCH_TASK_INDEX=5
+Data concatenated and written to /tmp/tmpvblkiz1f/1279054/fastBCR_input/1279054_ALL.csv
+# of sequences is 10454
+Memory cleared.
+Concatenating files to generate fastBCR input took 1.9009299278259277 time
+Error running R script: Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: ggplot2
+Loading required package: ggmsa
+Registered S3 methods overwritten by 'ggalt':
+  method                  from   
+  grid.draw.absoluteGrob  ggplot2
+  grobHeight.absoluteGrob ggplot2
+  grobWidth.absoluteGrob  ggplot2
+  grobX.absoluteGrob      ggplot2
+  grobY.absoluteGrob      ggplot2
+ggmsa v1.12.0  Document: http://yulab-smu.top/ggmsa/
+
+If you use ggmsa in published research, please cite:
+L Zhou, T Feng, S Xu, F Gao, TT Lam, Q Wang, T Wu, H Huang, L Zhan, L Li, Y Guan, Z Dai*, G Yu* ggmsa: a visual exploration tool for multiple sequence alignment and associated data. Briefings in Bioinformatics. DOI:10.1093/bib/bbac222
+Loading required package: msa
+Loading required package: Biostrings
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+Loading required package: XVector
+Loading required package: GenomeInfoDb
+
+Attaching package: ‘Biostrings’
+
+The following object is masked from ‘package:base’:
+
+    strsplit
+
+Loading required package: statnet
+Loading required package: tergm
+Loading required package: ergm
+Loading required package: network
+
+‘network’ 1.18.2 (2023-12-04), part of the Statnet Project
+* ‘news(package="network")’ for changes since last version
+* ‘citation("network")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+‘ergm’ 4.7.5 (2024-11-06), part of the Statnet Project
+* ‘news(package="ergm")’ for changes since last version
+* ‘citation("ergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+‘ergm’ 4 is a major update that introduces some backwards-incompatible
+changes. Please type ‘news(package="ergm")’ for a list of major
+changes.
+
+Loading required package: networkDynamic
+
+‘networkDynamic’ 0.11.5 (2024-11-21), part of the Statnet Project
+* ‘news(package="networkDynamic")’ for changes since last version
+* ‘citation("networkDynamic")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Registered S3 method overwritten by 'tergm':
+  method                   from
+  simulate_formula.network ergm
+
+‘tergm’ 4.2.1 (2024-10-08), part of the Statnet Project
+* ‘news(package="tergm")’ for changes since last version
+* ‘citation("tergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+Attaching package: ‘tergm’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+Loading required package: ergm.count
+
+‘ergm.count’ 4.1.2 (2024-06-15), part of the Statnet Project
+* ‘news(package="ergm.count")’ for changes since last version
+* ‘citation("ergm.count")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Loading required package: sna
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+The following object is masked from ‘package:Biostrings’:
+
+    order
+
+The following object is masked from ‘package:XVector’:
+
+    order
+
+The following object is masked from ‘package:IRanges’:
+
+    order
+
+The following object is masked from ‘package:S4Vectors’:
+
+    order
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    order
+
+The following objects are masked from ‘package:base’:
+
+    attr, order
+
+sna: Tools for Social Network Analysis
+Version 2.8 created on 2024-09-07.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+ For citation information, type citation("sna").
+ Type help(package="sna") to get started.
+
+Loading required package: tsna
+
+‘statnet’ 2019.6 (2019-06-13), part of the Statnet Project
+* ‘news(package="statnet")’ for changes since last version
+* ‘citation("statnet")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Error in bcr_clusters[[i]] : subscript out of bounds
+Calls: data.BCR.clusters -> BCR.cluster
+Execution halted
+
+Upload time took 6.532669067382812e-05 s
+Running with BATCH_TASK_INDEX=6
+Data concatenated and written to /tmp/tmpnm4j3a9u/1279055/fastBCR_input/1279055_ALL.csv
+# of sequences is 5789
+Memory cleared.
+Concatenating files to generate fastBCR input took 1.1824378967285156 time
+R script output: 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have loaded 1 samples
+Sample '1279055_ALL' contains 5789 sequences
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have preprocessed 1 samples
+Sample '1279055_ALL' contains 5571 unique clonotypes
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have clustered 1 samples
+Sample '1279055_ALL' contains 1 clonal families
+  |                                                                            
+  |                                                                      |   0%[1] 1
+use default substitution matrix
+
+  |                                                                            
+  |======================================================================| 100%[1] "fastBCR pipeline took: 2.28849792480469"
+
+Upload time took 0.14072585105895996 s
+Running with BATCH_TASK_INDEX=7
+Data concatenated and written to /tmp/tmpw9c3i9j_/1279057/fastBCR_input/1279057_ALL.csv
+# of sequences is 10722
+Memory cleared.
+Concatenating files to generate fastBCR input took 2.018615484237671 time
+Error running R script: Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: ggplot2
+Loading required package: ggmsa
+Registered S3 methods overwritten by 'ggalt':
+  method                  from   
+  grid.draw.absoluteGrob  ggplot2
+  grobHeight.absoluteGrob ggplot2
+  grobWidth.absoluteGrob  ggplot2
+  grobX.absoluteGrob      ggplot2
+  grobY.absoluteGrob      ggplot2
+ggmsa v1.12.0  Document: http://yulab-smu.top/ggmsa/
+
+If you use ggmsa in published research, please cite:
+L Zhou, T Feng, S Xu, F Gao, TT Lam, Q Wang, T Wu, H Huang, L Zhan, L Li, Y Guan, Z Dai*, G Yu* ggmsa: a visual exploration tool for multiple sequence alignment and associated data. Briefings in Bioinformatics. DOI:10.1093/bib/bbac222
+Loading required package: msa
+Loading required package: Biostrings
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+Loading required package: XVector
+Loading required package: GenomeInfoDb
+
+Attaching package: ‘Biostrings’
+
+The following object is masked from ‘package:base’:
+
+    strsplit
+
+Loading required package: statnet
+Loading required package: tergm
+Loading required package: ergm
+Loading required package: network
+
+‘network’ 1.18.2 (2023-12-04), part of the Statnet Project
+* ‘news(package="network")’ for changes since last version
+* ‘citation("network")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+‘ergm’ 4.7.5 (2024-11-06), part of the Statnet Project
+* ‘news(package="ergm")’ for changes since last version
+* ‘citation("ergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+‘ergm’ 4 is a major update that introduces some backwards-incompatible
+changes. Please type ‘news(package="ergm")’ for a list of major
+changes.
+
+Loading required package: networkDynamic
+
+‘networkDynamic’ 0.11.5 (2024-11-21), part of the Statnet Project
+* ‘news(package="networkDynamic")’ for changes since last version
+* ‘citation("networkDynamic")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Registered S3 method overwritten by 'tergm':
+  method                   from
+  simulate_formula.network ergm
+
+‘tergm’ 4.2.1 (2024-10-08), part of the Statnet Project
+* ‘news(package="tergm")’ for changes since last version
+* ‘citation("tergm")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+
+Attaching package: ‘tergm’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+Loading required package: ergm.count
+
+‘ergm.count’ 4.1.2 (2024-06-15), part of the Statnet Project
+* ‘news(package="ergm.count")’ for changes since last version
+* ‘citation("ergm.count")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Loading required package: sna
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:ergm’:
+
+    snctrl
+
+The following object is masked from ‘package:Biostrings’:
+
+    order
+
+The following object is masked from ‘package:XVector’:
+
+    order
+
+The following object is masked from ‘package:IRanges’:
+
+    order
+
+The following object is masked from ‘package:S4Vectors’:
+
+    order
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    order
+
+The following objects are masked from ‘package:base’:
+
+    attr, order
+
+sna: Tools for Social Network Analysis
+Version 2.8 created on 2024-09-07.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+ For citation information, type citation("sna").
+ Type help(package="sna") to get started.
+
+Loading required package: tsna
+
+‘statnet’ 2019.6 (2019-06-13), part of the Statnet Project
+* ‘news(package="statnet")’ for changes since last version
+* ‘citation("statnet")’ for citation information
+* ‘https://statnet.org’ for help, support, and other information
+
+Error in bcr_clusters[[i]] : subscript out of bounds
+Calls: data.BCR.clusters -> BCR.cluster
+Execution halted
+
+Upload time took 5.3882598876953125e-05 s
+Running with BATCH_TASK_INDEX=8
+Data concatenated and written to /tmp/tmp39324pvz/1279058/fastBCR_input/1279058_ALL.csv
+# of sequences is 16162
+Memory cleared.
+Concatenating files to generate fastBCR input took 2.9302291870117188 time
+R script output: 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have loaded 1 samples
+Sample '1279058_ALL' contains 16162 sequences
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have preprocessed 1 samples
+Sample '1279058_ALL' contains 14782 unique clonotypes
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have clustered 1 samples
+Sample '1279058_ALL' contains 11 clonal families
+  |                                                                            
+  |                                                                      |   0%[1] 1
+use default substitution matrix
+[1] 2
+use default substitution matrix
+[1] 3
+use default substitution matrix
+[1] 4
+use default substitution matrix
+[1] 5
+use default substitution matrix
+[1] 6
+use default substitution matrix
+[1] 7
+use default substitution matrix
+[1] 8
+use default substitution matrix
+[1] 9
+use default substitution matrix
+[1] 10
+use default substitution matrix
+[1] 11
+use default substitution matrix
+
+  |                                                                            
+  |======================================================================| 100%[1] "fastBCR pipeline took: 8.1588659286499"
+
+Upload time took 1.4082849025726318 s
+Running with BATCH_TASK_INDEX=9
+Data concatenated and written to /tmp/tmp3q0nhf2a/1279059/fastBCR_input/1279059_ALL.csv
+# of sequences is 14619
+Memory cleared.
+Concatenating files to generate fastBCR input took 2.7469136714935303 time
+R script output: 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have loaded 1 samples
+Sample '1279059_ALL' contains 14619 sequences
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have preprocessed 1 samples
+Sample '1279059_ALL' contains 13641 unique clonotypes
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+You have clustered 1 samples
+Sample '1279059_ALL' contains 4 clonal families
+  |                                                                            
+  |                                                                      |   0%[1] 1
+use default substitution matrix
+[1] 2
+use default substitution matrix
+[1] 3
+use default substitution matrix
+[1] 4
+use default substitution matrix
+
+  |                                                                            
+  |======================================================================| 100%[1] "fastBCR pipeline took: 6.54271197319031"
+
+Upload time took 0.5278792381286621 s
