@@ -26,6 +26,13 @@ docker tag clonaltree:prod_timing us-central1-docker.pkg.dev/profluent-evo/ab-li
 docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod_timing
 ```
 
+Production Container without timing
+```
+docker build --no-cache . -t clonaltree:prod
+docker tag clonaltree:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
+docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
+```
+
 Test production container
 ```
 docker run --rm clonaltree:prod_timing --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt
