@@ -1,92 +1,76 @@
 # Lineage Tree Generation
 
-Lineage tree generation for clonal families of antibody sequences, leveraging the FastBCR and ClonalTree tools
+Lineage tree generation for clonal families of antibody sequences, leveraging the FastBCR and ClonalTree tools.
 
-# fastBCR
+## Running Pipelines
+Run the following code to run the batch jobs from scratch
 
-## Running fastBCR Production (Batch) Container
-
-For testing and building the production container, `fastbcr:prod`, first navigate to the fastBCR_Docker dir, then run the following commands.
-
-Build the container:
+### Clone Git Repo
 ```
-docker build -t fastbcr:prod .
+git clone https://github.com/Profluent-AI/lineage_tree.git
+cd lineage_tree
 ```
 
-Test container without mounting of volume (production). Uses the input run_to_files list from GCP:
+### FastBCR
 ```
-docker run --rm --batch_task_index=0 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
-```
-
-Test the container with mounting of volume:
-```
-docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr:prod --batch_task_index=0 --batch_size=1 --batch_input='proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv'
+python generate_gcp_input_list.py
+gcloud beta batch jobs submit job-fastbcr-[X] --location us-central1 --config fastBCR_Docker/fastBCR_batch_config.json
 ```
 
-Input list file GCP path: `proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv`
-
-
-Building the Docker container and pushing to artifact repository:
-
+### ClonalTree
 ```
-docker build -f Dockerfile . -t fastbcr:prod
-docker tag fastbcr:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
-docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod
+./clonalTree_Docker/generate_clonalTree_batch_input.sh
+gcloud beta batch jobs submit job-ClonalTree-[X] --location us-central1 --config clonalTree_Docker/clonalTree_batch_config.json
 ```
 
-### fastBCR Batch job submission command
-Run the following command in bash:
-`gcloud beta batch jobs submit job-fastbcr-test[X] --location us-central1 --config batch_config.json`
+## Docker Images
 
-## Running fastBCR Docker Test Container in interactive mode
+Production docker images for fastBCR and ClonalTree are located in the GCP artifcat registry as follows:
+- us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod_timing
+- us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
 
-A Docker container exits to run the fastBCR input generation and fastBCR pipeline: `fastbcr`. For timing purposes, run the following command to mount the `lineage_tree` repository to the container:
+## Full Pipeline Overview
 
-```
-docker run -it -v /home/cameronhu/lineage_tree:/lineage_tree fastbcr bash
-```
+1. Batch input generation for fastBCR. The fastBCR batch input is the `human_unpaired_heavy_run_to_files.tsv` file mapping run_id to a list of file_paths.
+   1. Running `python generate_gcp_input_list.py` will generate the fastBCR batch input and store it at `gs://proevo-ab/lineages/fastbcr/batch/run_to_files.tsv`
+2. Run the GCP batch job for fastBCR
+   1. `gcloud beta batch jobs submit job-fastbcr-[X] --location us-central1 --config fastBCR_Docker/fastBCR_batch_config.json`
+3. Batch input generation for ClonalTree. The ClonalTree input is a list of all .fasta files generated from the fastBCR pipeline.
+   1. Run `./clonalTree_Docker/generate_clonalTree_batch_input.sh`. ClonalTree batch_input will be stored at `gs://proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt`
+4. Run the GCP batch job for ClonalTree
+   1. `gcloud beta batch jobs submit job-ClonalTree-[X] --location us-central1 --config clonalTree_Docker/clonalTree_batch_config.json`
 
-Then, within the container, run the following script to perform a timing test on the first 10 generated inputs:
+## Pipeline Inputs and Outputs
 
-```
-cd ../lineage_tree;
-chmod +x fastBCR_batch_timing_loop.sh
-./fastBCR_batch_timing_loop.sh
-tail -f timings_log.txt
-```
+All input and output files, including batch_inputs and pipeline outputs, are stored in GCS, within the `profluent-evo` bioinformatics project. Specifically, all lineage tree data is stored within the `proevo-ab/lineages` directory.
 
-## FastBCR Input Generation Notes
+### FastBCR 
 
-- `list_samples()` generates 3660 runs from just the human heavy chains. There are ~4000 runs total when querying the BigQuery db.
-- Running pipeline on 64 GB had insufficient memory for run: "proevo-ab/lineages/fastbcr/input/runs/SRR8365422". Increased to 124GB and testing.
-- Completed SRR8365422 at 124 GB, but was close to 100 GB of total memory. SRR8365422 has 4_545_677 unique  sequences, and 6_177_127 total sequences. ~950 seconds to complete this processing.
-- SRR8365433 crashed memory, has 25,705,003 total sequences, ~5 million unique sequences
-- Updated to 250 GB memory, was able to run SRR8283795 with 7.6 million unique sequences
+#### FastBCR Input
+- Batch Input: `proevo-ab/lineages/fastbcr/batch`
+- Batch inputs are generated from the raw OAS data files stored in `proevo-ab/oas/unpaired/unpaired_human/unpaired_human_heavy`
+- Different raw OAS file directories can be generated as batch_input files by modifying the input_dir path in `generate_gcp_input_list.py`
 
-# ClonalTree
+#### FastBCR Output
+- All fastBCR pipeline outputs are stored in the `proevo-ab/lineages/fastbcr/output` directory.
+- The `runs/` directory contains the .fasta file outputs of fastBCR, which correspond to inferred clonal families. The FASTA files are organized into their run directories. These FASTA files are used as the input to ClonalTree
+- `run_stats` contains clonal family statistics, organized by each run.
+  - Contains average number of clonal families, average size of clonal families, percentage of raw sequences actually mapped to clonal families, and some timing statistics
+- `run_clonotypes` is the mapping of the inferred clonotypes from fastBCR back to their original OAS data files.
+  - `clonotype_index` is the fastBCR generated clonotype index. Clonotypes may be linked to multiple raw sequence indices from the OAS data file
+  - `orign_index` is the raw OAS dataframe index for the representative sequence that is used for the clonotype. Should be contained within the `index_match` list
+  - The raw sequence indices are stored in the `index_match` column. `index_match` is an R list of all the dataframe indices that match up to this clonotype
+  
+### ClonalTree
+All ClonalTree related files are stored in the `proevo-ab/lineages/clonalTree` GCS directory.
 
-All files for the ClonalTree Docker are contained within the clonalTree_Docker/ directory.
+#### ClonalTree Input
+- Batch input for the ClonalTree pipeline is generated from the FASTA files generated by fastBCR.
+- These Batch inputs are stored at `proevo-ab/lineages/clonalTree/batch`
 
-## Docker container dev
-From the ClonalTree directory: `docker build -t clonaltree .'
+#### ClonalTree Outputs
+ClonalTree outputs both standard .nk files and .nk.csv files that are more human interpretable.
+- Lineage trees are stored in the `proevo-ab/lineages/clonalTree/output/runs` directory, organized by run.
 
-For interactive shell script container: `docker run --rm -it --rm clonaltree:latest`
-
-For production container, executable mode only:
-`docker run --rm -it clonaltree:prod --batch_task_index=0 --batch_size=1 --batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_input_directories.txt`
-
-Build, tag and push the clonaltree:prod container:
-```
-docker build --no-cache -t clonaltree:prod .
-docker tag clonaltree:prod us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
-docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod
-```
-
-### clonalTree Batch job submission command
-Navigate to clonalTree_Docker/clonalTree_batch_config.txt. Use those commands to start a new batch job, modifying the job ID each time.
-
-## Running ClonalTree test inputs
-
-Within the clonaltree Docker container, within the ~/ClonalTree directory, run the following command:
-
-```python src/clonalTree.py -i /lineage_tree/clonalTree_Docker/test/input/1279050/ClonalFamily_1.fasta -o /lineage_tree/clonalTree_Docker/test/output/ClonalFamily_1.abRT.nk```
+## Analysis 
+- Analysis is within the `analysis/` directory. fastBCR and ClonalTree stats are organized in their own notebooks.
