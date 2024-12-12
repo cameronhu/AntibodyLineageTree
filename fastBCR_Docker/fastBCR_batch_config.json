@@ -9,6 +9,15 @@
           "cpuMilli": "2000",
           "memoryMib": "8192"
         },
+        "maxRetryCount": 5,
+        "lifecyclePolicies": [
+          {
+             "action": "RETRY_TASK",
+             "actionCondition": {
+               "exitCodes": [50001]
+            }
+          }
+        ],        
         "runnables": [
           {
             "container": {
