@@ -1,22 +1,31 @@
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-fastbcr-n25",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-batch-testing-notime",
   "taskGroups": [
     {
-      "taskCount": "26",
+      "taskCount": "7065",
       "parallelism": "1000",
       "taskSpec": {
         "computeResource": {
           "cpuMilli": "2000",
-          "memoryMib": "8192"
+          "memoryMib": "8192",
         },
+        "maxRetryCount": 5,
+        "lifecyclePolicies": [
+          {
+             "action": "RETRY_TASK",
+             "actionCondition": {
+               "exitCodes": [50001]
+            }
+          }
+        ],
         "runnables": [
           {
             "container": {
-              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod",
+              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod",
               "entrypoint": "",
               "commands": [
-                "--batch_input=proevo-ab/lineages/fastbcr/batch/human_unpaired_heavy_run_to_files.tsv",
-                "--batch_size=1",
+                "--batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt",
+                "--batch_size=100",
                 "--cpu_count=10"
               ],
               "volumes": []
