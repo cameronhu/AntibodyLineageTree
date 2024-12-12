@@ -44,7 +44,7 @@ docker push us-central1-docker.pkg.dev/profluent-evo/ab-lineages/fastbcr:prod_ti
 
 ### fastBCR Batch job submission command
 Run the following command in bash:
-`gcloud beta batch jobs submit job-fastbcr-test[X] --location us-central1 --config batch_config.json`
+`gcloud beta batch jobs submit job-fastbcr-test[X] --location us-central1 --config fastBCR_batch_config.json`
 
 ## Running fastBCR Docker Test Container in interactive mode
 
@@ -85,4 +85,4 @@ Counts the number of subdirectories within the `proevo-ab/lineages/fastbcr/outpu
 
 Batch 4 run with 64 GB memory, 8vCPU.
 
-After Batch 4, 156 additional runs leftover in `human_unpaired_heavy_run_to_file_batch_5.tsv`. Batch 5 run with e2-highmem-16, 128 GB, 16vCPU.
+After Batch 4, 156 additional runs leftover in `human_unpaired_heavy_run_to_file_batch_5.tsv`. Batch 5 run with e2-highmem-16, 128 GB, 16vCPU.****
