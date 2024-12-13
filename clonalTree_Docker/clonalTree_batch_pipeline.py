@@ -162,6 +162,7 @@ class Pipeline:
             input = input.replace("gs://", "")
             gcs_bucket, gcs_path = input.split("/", 1)
             run_name = input.split("/")[-2]
+            tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
 
             # Check if the output file for this input already exists. If so, skip this input
             # Generate the output directory and file path specific to this input
@@ -179,7 +180,6 @@ class Pipeline:
                 continue
 
             # make tmp_dir
-            tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
             clonalTree_input_dir = os.path.join(tmp_dir, "clonalTree_input")
             clonalTree_output_dir = os.path.join(tmp_dir, "clonalTree_output")
             os.makedirs(tmp_dir, exist_ok=True)
@@ -226,7 +226,8 @@ class Pipeline:
                     )
 
         # clean up
-        shutil.rmtree(f"{tmp_dir}")
+        if os.path.isdir(tmp_dir):
+            shutil.rmtree(tmp_dir)
 
 
 if __name__ == "__main__":
