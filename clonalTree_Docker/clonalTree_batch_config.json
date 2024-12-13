@@ -1,5 +1,5 @@
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-ClonalTree-batch-2",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-batch-2",
   "taskGroups": [
     {
       "taskCount": "7065",

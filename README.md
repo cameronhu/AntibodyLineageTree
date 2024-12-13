@@ -38,7 +38,7 @@ Production docker images for fastBCR and ClonalTree are located in the GCP artif
 3. Batch input generation for ClonalTree. The ClonalTree input is a list of all .fasta files generated from the fastBCR pipeline.
    1. Run `./clonalTree_Docker/generate_clonalTree_batch_input.sh`. ClonalTree batch_input will be stored at `gs://proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt`
 4. Run the GCP batch job for ClonalTree
-   1. `gcloud beta batch jobs submit job-ClonalTree-batch-[X] --location us-central1 --config clonalTree_Docker/clonalTree_batch_config.json`
+   1. `gcloud beta batch jobs submit job-clonaltree-batch-[X] --location us-central1 --config clonalTree_Docker/clonalTree_batch_config.json`
 
 ## Pipeline Inputs and Outputs
 
