@@ -1,5 +1,5 @@
 {
-  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-batch-testing-notime",
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-ClonalTree-batch-2",
   "taskGroups": [
     {
       "taskCount": "7065",
@@ -7,7 +7,7 @@
       "taskSpec": {
         "computeResource": {
           "cpuMilli": "2000",
-          "memoryMib": "8192",
+          "memoryMib": "16000",
         },
         "maxRetryCount": 5,
         "lifecyclePolicies": [
@@ -41,7 +41,7 @@
       {
         "policy": {
           "provisioningModel": "SPOT",
-          "machineType": "e2-standard-2"
+          "machineType": "e2-highmem-2"
         }
       }
     ]
