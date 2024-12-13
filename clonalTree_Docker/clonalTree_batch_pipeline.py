@@ -44,6 +44,23 @@ def gcs_read(bucket_name, src_name):
         return None
 
 
+def gcs_file_exists(bucket_name, file_path):
+    """
+    Check if a specific file exists in a GCS bucket.
+
+    Args:
+        bucket_name (str): Name of the GCS bucket.
+        file_path (str): Path to the file within the bucket.
+
+    Returns:
+        bool: True if the file exists, False otherwise.
+    """
+    client = storage.Client(project="profluent-evo")
+    bucket = client.bucket(bucket_name)
+    blob = bucket.blob(file_path)
+    return blob.exists()
+
+
 def gcs_list_files(bucket_name, dst_name):
     # Initialize the GCS client
     client = storage.Client(project="profluent-evo")
@@ -118,7 +135,6 @@ class Pipeline:
 
         # Save the input_list as attribute
         self.input_list = input_list[input_start:input_stop]
-        # print(self.input_list)
 
     def parse_args(self):
 
@@ -146,6 +162,21 @@ class Pipeline:
             input = input.replace("gs://", "")
             gcs_bucket, gcs_path = input.split("/", 1)
             run_name = input.split("/")[-2]
+
+            # Check if the output file for this input already exists. If so, skip this input
+            # Generate the output directory and file path specific to this input
+            output_dir = f"lineages/clonalTree/output/runs/{run_name}"
+            output_file_name = (
+                f"{run_name}_{os.path.basename(gcs_path).replace('.fasta', '.abRT.nk')}"
+            )
+            output_file_path = os.path.join(output_dir, output_file_name)
+
+            # Check if the output file for this input already exists. If so, skip this input
+            if gcs_file_exists(gcs_bucket, output_file_path):
+                print(
+                    f"Output file {output_file_path} already exists. Skipping input {input}."
+                )
+                continue
 
             # make tmp_dir
             tmp_dir = os.path.join(self.args["tmp_dir"], run_name)
