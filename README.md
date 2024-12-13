@@ -113,5 +113,7 @@ ClonalTree outputs both standard .nk files and .nk.csv files that are more human
 ##### Representative Tree Graph
 ![clonal_tree](analysis/ERR1812282_ClonalFamily_12.abRT.nk.png)
 
+- Tree generation notebook within `clonalTree_Docker/tree.ipynb`
+
 ## Analysis 
 - Analysis is within the `analysis/` directory. fastBCR and ClonalTree stats are organized in their own notebooks.
