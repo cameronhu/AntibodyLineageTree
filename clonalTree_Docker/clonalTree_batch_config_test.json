@@ -1,0 +1,52 @@
+{
+  "name": "projects/profluent-evo/locations/us-central1/jobs/job-clonaltree-test-1",
+  "taskGroups": [
+    {
+      "taskCount": "1",
+      "parallelism": "1000",
+      "taskSpec": {
+        "computeResource": {
+          "cpuMilli": "2000",
+          "memoryMib": "16000",
+        },
+        "maxRetryCount": 5,
+        "lifecyclePolicies": [
+          {
+             "action": "RETRY_TASK",
+             "actionCondition": {
+               "exitCodes": [50001]
+            }
+          }
+        ],
+        "runnables": [
+          {
+            "container": {
+              "imageUri": "us-central1-docker.pkg.dev/profluent-evo/ab-lineages/clonaltree:prod",
+              "entrypoint": "",
+              "commands": [
+                "--batch_input=proevo-ab/lineages/clonalTree/batch/clonalTree_batch_input.txt",
+                "--batch_size=100",
+                "--cpu_count=10"
+              ],
+              "volumes": []
+            }
+          }
+        ],
+        "volumes": []
+      }
+    }
+  ],
+  "allocationPolicy": {
+    "instances": [
+      {
+        "policy": {
+          "provisioningModel": "SPOT",
+          "machineType": "e2-highmem-2"
+        }
+      }
+    ]
+  },
+  "logsPolicy": {
+    "destination": "CLOUD_LOGGING"
+  }
+}
